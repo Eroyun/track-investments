@@ -7,8 +7,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
+  IconButton,
 } from "@mui/material";
+
+import CloseIcon from "@mui/icons-material/Close";
 
 const AddStockModal = () => {
   const [transactionDate, setTransactionDate] = useState("");
@@ -58,13 +60,13 @@ const AddStockModal = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     switch (name) {
-      case "buy_date":
+      case "transaction_date":
         setTransactionDate(value);
         break;
       case "stock":
         setStock(value);
         break;
-      case "buy_quantity":
+      case "stock_quantity":
         setStockQuantity(parseInt(value)); // Ensure integer value
         // Update total cost automatically
         if (stockPrice > 0 && value > 0) setTotalAmount(stockPrice * value);
@@ -89,73 +91,117 @@ const AddStockModal = () => {
   };
 
   return (
-    <div className="add-stock-modal">
+    <div style={{ right: "10%" }} className="absolute">
       <Button
         variant="contained"
         onClick={handleOpen}
-        className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
+        className="bg-blue-500 hover:bg-blue-700 text-white py-2.5 px-7 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
       >
-        Add Stock
+        Add
       </Button>
-
-      {/* Modal content */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add Stock</DialogTitle>
+      <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
+        <DialogTitle>
+          Add Stock
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            style={{ position: "absolute", right: "10px", top: "10px" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <DialogContent>
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-            <TextField
-              label="Buy Date"
-              type="date"
-              name="buy_date"
-              value={transactionDate}
-              onChange={handleChange}
-              required
-              className="text-field px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <TextField
-              label="Stock"
-              type="text"
-              name="stock"
-              value={stock}
-              onChange={handleChange}
-              required
-              className="text-field px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <TextField
-              label="Buy Quantity"
-              type="number"
-              name="buy_quantity"
-              min="1" // Set minimum quantity to 1
-              value={stockQuantity}
-              onChange={handleChange}
-              required
-              className="text-field px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <TextField
-              label="Stock Price"
-              type="number"
-              step="0.01" // Allow decimal input for stock price
-              name="stock_price"
-              value={stockPrice}
-              onChange={handleChange}
-              required
-              className="text-field px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <TextField
-              label="Total Cost"
-              type="number"
-              name="total_cost"
-              value={totalAmount.toFixed(2)} // Display total cost with 2 decimal places
-              readOnly // Make total cost read-only as it's calculated automatically
-              className="text-field px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
-            >
-              Add Stock
-            </Button>
+          <form
+            id="addStockForm"
+            onSubmit={handleSubmit}
+            className="flex flex-col space-y-2"
+          >
+            <div className="mb-2">
+              <label
+                htmlFor="transaction_date"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Transaction Date
+              </label>
+              <input
+                type="date"
+                id="transaction_date"
+                name="transaction_date"
+                value={transactionDate}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="stock"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Stock
+              </label>
+              <input
+                type="text"
+                id="stock"
+                name="stock"
+                value={stock || ""}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="stock_quantity"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Stock Quantity
+              </label>
+              <input
+                type="number"
+                id="stock_quantity"
+                name="stock_quantity"
+                min="1"
+                value={stockQuantity}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="stock_price"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Stock Price
+              </label>
+              <input
+                type="number"
+                id="stock_price"
+                name="stock_price"
+                step="0.01"
+                value={stockPrice}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="total_cost"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Total Cost
+              </label>
+              <input
+                type="number"
+                id="total_cost"
+                name="total_cost"
+                value={totalAmount.toFixed(2)}
+                readOnly
+                className="w-full px-3 py-2 rounded-md bg-gray-200 text-gray-700 cursor-not-allowed"
+              />
+            </div>
           </form>
         </DialogContent>
         <DialogActions>
@@ -165,6 +211,13 @@ const AddStockModal = () => {
             className="border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancel
+          </Button>
+          <Button
+            form="addStockForm"
+            type="submit"
+            className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
+          >
+            Add Stock
           </Button>
         </DialogActions>
       </Dialog>

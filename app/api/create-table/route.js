@@ -1,9 +1,9 @@
 import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
-export async function GET(request) {
+export async function GET() {
   try {
-    const result = await sql`CREATE TABLE stocks (
+    const result = await sql`CREATE TABLE Stocks (
         transaction_date DATE,
         stock VARCHAR(255),
         stock_quantity INTEGER,
