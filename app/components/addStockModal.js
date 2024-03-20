@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -9,19 +9,33 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
-
 import CloseIcon from "@mui/icons-material/Close";
 
+import {
+  currencies,
+  formatNumberAsCurrency,
+} from "../helpers/localizationHelper";
+
 const AddStockModal = () => {
+  const [currency, setCurrency] = useState("USD");
   const [transactionDate, setTransactionDate] = useState("");
   const [stock, setStock] = useState("");
   const [stockQuantity, setStockQuantity] = useState(0);
-  const [stockPrice, setStockPrice] = useState(0.0);
-  const [totalAmount, setTotalAmount] = useState(0.0); // Calculate total cost automatically
-  const [open, setOpen] = useState(false); // State for modal visibility
+  const [displayQuantity, setDisplayQuantity] = useState("0");
+  const [stockPrice, setStockPrice] = useState(0);
+  const [displayPrice, setDisplayPrice] = useState("0");
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [displayTotal, setDisplayTotal] = useState("");
+  const [open, setOpen] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    // Update displayed numbers when currency changes
+    setDisplayPrice(formatNumberAsCurrency(stockPrice, currency));
+    setDisplayTotal(formatNumberAsCurrency(totalAmount, currency));
+  }, [currency]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await fetch("/api/add-stock", {
         method: "POST",
@@ -40,12 +54,11 @@ const AddStockModal = () => {
       }
 
       const data = await response.json();
-      console.log("Success:", data.message); // Log success message for debugging
-      setOpen(false); // Close modal on success
-      resetForm(); // Reset form fields
+      setOpen(false);
+      resetForm();
     } catch (error) {
-      console.error("Error:", error.message); // Log error message for debugging
-      alert("An error occurred. Please try again."); // Alert user about error
+      console.error("Error:", error.message);
+      alert("An error occurred. Please try again.");
     }
   };
 
@@ -53,12 +66,12 @@ const AddStockModal = () => {
     setTransactionDate("");
     setStock("");
     setStockQuantity(0);
-    setStockPrice(0.0);
-    setTotalAmount(0.0);
+    setStockPrice(0);
+    setTotalAmount(0);
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
     switch (name) {
       case "transaction_date":
         setTransactionDate(value);
@@ -67,18 +80,72 @@ const AddStockModal = () => {
         setStock(value);
         break;
       case "stock_quantity":
-        setStockQuantity(parseInt(value)); // Ensure integer value
-        // Update total cost automatically
-        if (stockPrice > 0 && value > 0) setTotalAmount(stockPrice * value);
+        setDisplayQuantity(value);
         break;
       case "stock_price":
-        setStockPrice(parseFloat(value)); // Ensure decimal value
-        // Update total cost automatically
-        if (value > 0 && stockQuantity > 0)
-          setTotalAmount(value * stockQuantity);
+        setDisplayPrice(value);
+        break;
+      case "currency":
+        setCurrency(value);
         break;
       default:
         break;
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case "stock_quantity":
+        if (value !== "") {
+          const parsedValue = parseInt(value, 10);
+          if (!isNaN(parsedValue)) {
+            setStockQuantity(parsedValue);
+            setDisplayQuantity(parsedValue.toString());
+            // Update total cost automatically
+            if (stockPrice > 0 && parsedValue > 0) {
+              const total = stockPrice * parsedValue;
+              setTotalAmount(total);
+              setDisplayTotal(formatNumberAsCurrency(total, currency));
+            }
+          }
+        } else {
+          if (displayQuantity === "") {
+            e.target.value = stockQuantity;
+          } else {
+            e.target.value = displayQuantity;
+          }
+        }
+        break;
+      case "stock_price":
+        if (value !== "") {
+          const parsedValue = parseFloat(value);
+          if (!isNaN(parsedValue)) {
+            setStockPrice(parsedValue);
+            setDisplayPrice(formatNumberAsCurrency(parsedValue, currency));
+            // Update total cost automatically
+            if (stockQuantity > 0 && parsedValue > 0) {
+              const total = stockQuantity * parsedValue;
+              setTotalAmount(total);
+              setDisplayTotal(formatNumberAsCurrency(total, currency));
+            }
+          }
+        } else {
+          if (displayPrice === "") {
+            e.target.value = formatNumberAsCurrency(stockPrice, currency);
+          } else {
+            e.target.value = displayPrice;
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleClick = (e) => {
+    if (parseFloat(e.target.value) === 0) {
+      e.target.value = "";
     }
   };
 
@@ -144,7 +211,8 @@ const AddStockModal = () => {
                 type="text"
                 id="stock"
                 name="stock"
-                value={stock || ""}
+                placeholder="e.g. AAPL, TSLA, MSFT, etc."
+                value={stock}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -162,11 +230,35 @@ const AddStockModal = () => {
                 id="stock_quantity"
                 name="stock_quantity"
                 min="1"
-                value={stockQuantity}
+                value={displayQuantity}
+                onClick={handleClick}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="currency"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Currency
+              </label>
+              <select
+                id="currency"
+                name="currency"
+                value={currency}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {currencies.map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="mb-2">
               <label
@@ -176,12 +268,13 @@ const AddStockModal = () => {
                 Stock Price
               </label>
               <input
-                type="number"
+                type="text"
                 id="stock_price"
                 name="stock_price"
-                step="0.01"
-                value={stockPrice}
+                value={displayPrice}
+                onClick={handleClick}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 required
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -194,10 +287,10 @@ const AddStockModal = () => {
                 Total Cost
               </label>
               <input
-                type="number"
+                type="text"
                 id="total_cost"
                 name="total_cost"
-                value={totalAmount.toFixed(2)}
+                value={displayTotal}
                 readOnly
                 className="w-full px-3 py-2 rounded-md bg-gray-200 text-gray-700 cursor-not-allowed"
               />

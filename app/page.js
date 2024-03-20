@@ -22,12 +22,15 @@ const Home = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filter, setFilter] = useState("");
-
   const getStocks = async () => {
     try {
       const response = await fetch("/api/get-stocks");
       if (!response.ok) {
-        throw new Error("Failed to fetch stocks");
+        const res = await fetch("/api/create-table");
+        if (!res.ok) {
+          throw new Error("Failed to fetch stocks");
+        }
+        return getStocks();
       }
       const data = await response.json();
       setStocks(data.rows);
@@ -41,7 +44,7 @@ const Home = () => {
     if (stocks.length === 0) {
       getStocks();
     }
-  }, [stocks.length]);
+  }, []);
 
   return (
     <div>
