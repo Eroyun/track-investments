@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const result = await sql`CREATE TABLE stocks (
+    const result = await sql`CREATE TABLE IF NOT EXISTS stocks (
         transaction_type VARCHAR(12),
         transaction_date DATE,
         stock VARCHAR(255),

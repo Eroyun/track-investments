@@ -16,7 +16,7 @@ import {
   formatNumberAsCurrency,
 } from "../helpers/localizationHelper";
 
-const AddStockModal = () => {
+const AddStockModal = ({ style, className }) => {
   const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState("USD");
   const [transactionDate, setTransactionDate] = useState("");
@@ -165,7 +165,7 @@ const AddStockModal = () => {
   };
 
   return (
-    <div style={{ right: "5.25%" }} className="absolute">
+    <div style={style} className={className}>
       <Button
         variant="contained"
         onClick={handleOpen}
