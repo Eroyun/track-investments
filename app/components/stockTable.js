@@ -83,10 +83,10 @@ const StockTable = ({ fields, stocks, getStocks }) => {
             ))}
         </TableBody>
       </Table>
-      <div style={{ position: "absolute", bottom: 25, width: "100%" }}>
+      <div>
         <AddStockModal
-          style={{ right: "10%" }}
-          className="absolute"
+          className="float-right"
+          style={{ marginRight: "3.75rem" }}
           getStocks={getStocks}
         />
         <TablePagination
@@ -98,7 +98,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
           onRowsPerPageChange={(event) =>
             setRowsPerPage(parseInt(event.target.value, 10))
           }
-          style={{ float: "left", marginLeft: "-5px" }}
+          className="float-left ml-6"
         />
       </div>
     </TableContainer>
@@ -108,9 +108,9 @@ const StockTable = ({ fields, stocks, getStocks }) => {
 const EmptyStocks = ({ getStocks }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-200 p-10 space-y-5">
-      <h2 className="text-2xl text-gray-700">No stocks available.</h2>
+      <h2 className="text-2xl text-gray-700">No transactions available.</h2>
       <p className="text-lg text-gray-500">
-        Please add some stocks to view them here.
+        Please add transactions to view them here.
       </p>
       <AddStockModal getStocks={getStocks} />
     </div>

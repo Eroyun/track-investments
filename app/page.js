@@ -38,10 +38,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div
-      className="flex flex-col mx-auto px-10 py-10"
-      style={{ height: "100vh" }}
-    >
+    <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
       <StockTable fields={fields} stocks={stocks} getStocks={getStocks} />
     </div>
   );

@@ -1,4 +1,5 @@
-const currencies = ["TRY", "USD", "EUR", "GBP"];
+const currencies = ["USD", "TRY", "EUR", "GBP"];
+const markets = ["NASDAQ", "BIST", "CRYPTO", "OTHER"];
 
 const formatNumberAsCurrency = (value, currency = "USD", locale = "tr-TR") => {
   return new Intl.NumberFormat(locale, {
@@ -7,4 +8,4 @@ const formatNumberAsCurrency = (value, currency = "USD", locale = "tr-TR") => {
   }).format(value);
 };
 
-module.exports = { currencies, formatNumberAsCurrency };
+module.exports = { currencies, markets, formatNumberAsCurrency };

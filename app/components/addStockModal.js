@@ -13,12 +13,14 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import {
   currencies,
+  markets,
   formatNumberAsCurrency,
 } from "../helpers/localizationHelper";
 
 const AddStockModal = ({ style, className, getStocks }) => {
   const [transactionType, setTransactionType] = useState("BUY");
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState(currencies[0]);
+  const [market, setMarket] = useState(markets[0]);
   const [transactionDate, setTransactionDate] = useState("");
   const [stock, setStock] = useState("");
   const [stockQuantity, setStockQuantity] = useState(0);
@@ -49,6 +51,7 @@ const AddStockModal = ({ style, className, getStocks }) => {
           stock_price: stockPrice,
           total_cost: totalAmount,
           transaction_type: transactionType,
+          market,
         }),
       });
 
@@ -93,6 +96,9 @@ const AddStockModal = ({ style, className, getStocks }) => {
         break;
       case "currency":
         setCurrency(value);
+        break;
+      case "market":
+        setMarket(value);
         break;
       default:
         break;
@@ -227,6 +233,28 @@ const AddStockModal = ({ style, className, getStocks }) => {
             </div>
             <div className="mb-2">
               <label
+                htmlFor="market"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Market
+              </label>
+              <select
+                id="market"
+                name="market"
+                value={market}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {markets.map((market) => (
+                  <option key={market} value={market}>
+                    {market}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-2">
+              <label
                 htmlFor="stock"
                 className="block text-sm font-medium text-gray-700"
               >
@@ -236,7 +264,7 @@ const AddStockModal = ({ style, className, getStocks }) => {
                 type="text"
                 id="stock"
                 name="stock"
-                placeholder="e.g. AAPL, TSLA, MSFT, etc."
+                placeholder="e.g. AAPL, THYAO, BTC etc."
                 value={stock}
                 onChange={handleChange}
                 required

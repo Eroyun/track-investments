@@ -13,7 +13,8 @@ export async function GET() {
         stock_quantity INTEGER,
         currency VARCHAR(3),
         stock_price DECIMAL(10, 2),
-        total_cost DECIMAL(10, 2)
+        total_cost DECIMAL(10, 2),
+        market VARCHAR(12)
     );`;
     return NextResponse.json({ result }, { status: 200 });
   } catch (error) {
