@@ -2,18 +2,16 @@ import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { transaction_date, stock, stock_quantity } = await req.json();
-  const date = new Date(transaction_date);
-  const formattedDate = `${date.getFullYear()}-${String(
-    date.getMonth() + 1
-  ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const { transaction_id } = await req.json();
 
   try {
     const res = await sql`
       DELETE FROM stocks
-      WHERE transaction_date = ${formattedDate} AND stock = ${stock} AND stock_quantity = ${stock_quantity};
+      WHERE transaction_id = ${transaction_id};
     `;
-    console.log(res);
+    if (!res) {
+      throw new Error("Failed to delete stock");
+    }
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

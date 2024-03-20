@@ -16,7 +16,7 @@ import {
   formatNumberAsCurrency,
 } from "../helpers/localizationHelper";
 
-const AddStockModal = ({ style, className }) => {
+const AddStockModal = ({ style, className, getStocks }) => {
   const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState("USD");
   const [transactionDate, setTransactionDate] = useState("");
@@ -53,16 +53,15 @@ const AddStockModal = ({ style, className }) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add stock");
+        const data = await response.json();
+        throw new Error(data.error || response.statusText);
       }
 
-      const data = await response.json();
-      console.log(data);
+      getStocks();
       setOpen(false);
       resetForm();
     } catch (error) {
-      console.error("Error:", error.message);
-      alert("An error occurred. Please try again.");
+      alert(error.message);
     }
   };
 

@@ -27,7 +27,7 @@ const Home = () => {
       setStocks(data.rows);
       setFields(data.fields);
     } catch (error) {
-      console.error("Error:", error.message);
+      alert(error.message);
     }
   };
 
@@ -37,7 +37,7 @@ const Home = () => {
     }
   }, []);
 
-  return <StockTable fields={fields} stocks={stocks} />;
+  return <StockTable fields={fields} stocks={stocks} getStocks={getStocks} />;
 };
 
 export default Home;

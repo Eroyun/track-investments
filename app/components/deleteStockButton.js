@@ -3,28 +3,25 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-const DeleteStockButton = ({ transactionDate, stock, stockQuantity }) => {
+const DeleteStockButton = ({ transactionID, getStocks }) => {
   const handleSubmit = async () => {
     try {
       const response = await fetch("/api/delete-stock", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          transaction_date: transactionDate,
-          stock,
-          stock_quantity: stockQuantity,
+          transaction_id: transactionID,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete stock");
+        const data = await response.json();
+        throw new Error(data.error || response.statusText);
       }
 
-      const data = await response.json();
-      console.log("Success:", data.message); // Log success message for debugging
+      getStocks();
     } catch (error) {
-      console.error("Error:", error.message); // Log error message for debugging
-      alert("An error occurred. Please try again."); // Alert user about error
+      alert(error.message); // Alert user about error
     }
   };
 
