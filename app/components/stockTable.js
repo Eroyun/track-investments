@@ -46,13 +46,13 @@ const StockTable = ({ fields, stocks, getStocks }) => {
   }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} style={{ height: "100%" }}>
       <Table>
         <TableHead>
           <TableRow>
             {fields.map((field, index) =>
               index === 0 ? null : (
-                <TableCell key={index}>
+                <TableCell align="center" key={index}>
                   {field.name
                     .replace("_", " ")
                     .replace(/\b\w/g, (l) => l.toUpperCase())}
@@ -68,7 +68,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
               <TableRow key={index}>
                 {fields.map((field, index) =>
                   index === 0 ? null : (
-                    <TableCell key={index}>
+                    <TableCell align="center" key={index}>
                       {formatTableCell(index, field, stock)}
                     </TableCell>
                   )
@@ -83,22 +83,24 @@ const StockTable = ({ fields, stocks, getStocks }) => {
             ))}
         </TableBody>
       </Table>
-      <AddStockModal
-        style={{ right: "5.25%" }}
-        className="absolute"
-        getStocks={getStocks}
-      />
-      <TablePagination
-        component="div"
-        count={stocks.length}
-        page={page}
-        onPageChange={(event, newPage) => setPage(newPage)}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(event) =>
-          setRowsPerPage(parseInt(event.target.value, 10))
-        }
-        style={{ float: "left", marginLeft: "-5px" }}
-      />
+      <div style={{ position: "absolute", bottom: 25, width: "100%" }}>
+        <AddStockModal
+          style={{ right: "10%" }}
+          className="absolute"
+          getStocks={getStocks}
+        />
+        <TablePagination
+          component="div"
+          count={stocks.length}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(event) =>
+            setRowsPerPage(parseInt(event.target.value, 10))
+          }
+          style={{ float: "left", marginLeft: "-5px" }}
+        />
+      </div>
     </TableContainer>
   );
 };

@@ -37,7 +37,14 @@ const Home = () => {
     }
   }, []);
 
-  return <StockTable fields={fields} stocks={stocks} getStocks={getStocks} />;
+  return (
+    <div
+      className="flex flex-col mx-auto px-10 py-10"
+      style={{ height: "100vh" }}
+    >
+      <StockTable fields={fields} stocks={stocks} getStocks={getStocks} />
+    </div>
+  );
 };
 
 export default Home;
