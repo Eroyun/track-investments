@@ -17,6 +17,7 @@ import {
 } from "../helpers/localizationHelper";
 
 const AddStockModal = () => {
+  const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState("USD");
   const [transactionDate, setTransactionDate] = useState("");
   const [stock, setStock] = useState("");
@@ -44,8 +45,10 @@ const AddStockModal = () => {
           transaction_date: transactionDate,
           stock,
           stock_quantity: stockQuantity,
+          currency,
           stock_price: stockPrice,
           total_cost: totalAmount,
+          transaction_type: transactionType,
         }),
       });
 
@@ -54,6 +57,7 @@ const AddStockModal = () => {
       }
 
       const data = await response.json();
+      console.log(data);
       setOpen(false);
       resetForm();
     } catch (error) {
@@ -73,6 +77,9 @@ const AddStockModal = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
+      case "transaction_type":
+        setTransactionType(value);
+        break;
       case "transaction_date":
         setTransactionDate(value);
         break;
@@ -158,7 +165,7 @@ const AddStockModal = () => {
   };
 
   return (
-    <div style={{ right: "10%" }} className="absolute">
+    <div style={{ right: "5.25%" }} className="absolute">
       <Button
         variant="contained"
         onClick={handleOpen}
@@ -183,6 +190,25 @@ const AddStockModal = () => {
             onSubmit={handleSubmit}
             className="flex flex-col space-y-2"
           >
+            <div className="mb-2">
+              <label
+                htmlFor="transaction_type"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Transaction Type
+              </label>
+              <select
+                id="transaction_type"
+                name="transaction_type"
+                value={transactionType}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="BUY">Buy</option>
+                <option value="SELL">Sell</option>
+              </select>
+            </div>
             <div className="mb-2">
               <label
                 htmlFor="transaction_date"
