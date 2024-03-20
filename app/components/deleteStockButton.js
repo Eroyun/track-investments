@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Button } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const DeleteStockButton = ({ transactionID, getStocks }) => {
   const handleSubmit = async () => {
@@ -26,11 +27,12 @@ const DeleteStockButton = ({ transactionID, getStocks }) => {
   };
 
   return (
-    <div className="add-stock-modal">
+    <div>
       <Button
         variant="contained"
         onClick={handleSubmit}
-        className="bg-red-500 hover:bg-red-700 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
+        className="bg-gray-200 flex items-center justify-center" // Tailwind CSS classes
+        startIcon={<DeleteIcon />}
       >
         Delete
       </Button>

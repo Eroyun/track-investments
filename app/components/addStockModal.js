@@ -9,7 +9,9 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import Select from "react-select";
 
 import {
   currencies,
@@ -174,8 +176,9 @@ const AddStockModal = ({ style, className, getStocks }) => {
       <Button
         variant="contained"
         onClick={handleOpen}
-        className="bg-blue-500 hover:bg-blue-700 text-white py-2.5 px-7 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
+        className="bg-blue-500 hover:bg-blue-700 text-white py-2.5 px-7 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 w-32 flex justify-center items-center mr-12"
       >
+        <AddIcon />
         Add
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
@@ -198,26 +201,38 @@ const AddStockModal = ({ style, className, getStocks }) => {
             <div className="mb-2">
               <label
                 htmlFor="transaction_type"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Transaction Type
               </label>
-              <select
+              <Select
                 id="transaction_type"
                 name="transaction_type"
-                value={transactionType}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="BUY">Buy</option>
-                <option value="SELL">Sell</option>
-              </select>
+                value={{ label: transactionType, value: transactionType }}
+                onChange={(selectedOption) =>
+                  setTransactionType(selectedOption.value)
+                }
+                options={[
+                  { value: "BUY", label: "BUY" },
+                  { value: "SELL", label: "SELL" },
+                ]}
+                placeholder="Select transaction type"
+                className="rounded-md p-1 text-black"
+                styles={{
+                  option: (styles, { isFocused }) => {
+                    return {
+                      ...styles,
+                      backgroundColor: isFocused ? "#545454" : null,
+                      color: isFocused ? "white" : null,
+                    };
+                  },
+                }}
+              />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="transaction_date"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Transaction Date
               </label>
@@ -228,35 +243,42 @@ const AddStockModal = ({ style, className, getStocks }) => {
                 value={transactionDate}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
               />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="market"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Market
               </label>
-              <select
+              <Select
                 id="market"
                 name="market"
-                value={market}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                {markets.map((market) => (
-                  <option key={market} value={market}>
-                    {market}
-                  </option>
-                ))}
-              </select>
+                value={{ label: market, value: market }}
+                onChange={(selectedOption) => setMarket(selectedOption.value)}
+                options={markets.map((market) => ({
+                  value: market,
+                  label: market,
+                }))}
+                placeholder="Select market"
+                className="rounded-md p-1 text-black"
+                styles={{
+                  option: (styles, { isFocused }) => {
+                    return {
+                      ...styles,
+                      backgroundColor: isFocused ? "#545454" : null,
+                      color: isFocused ? "white" : null,
+                    };
+                  },
+                }}
+              />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="stock"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Stock
               </label>
@@ -268,13 +290,13 @@ const AddStockModal = ({ style, className, getStocks }) => {
                 value={stock}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
               />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="stock_quantity"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Stock Quantity
               </label>
@@ -288,35 +310,42 @@ const AddStockModal = ({ style, className, getStocks }) => {
                 onBlur={handleBlur}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
               />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="currency"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Currency
               </label>
-              <select
+              <Select
                 id="currency"
                 name="currency"
-                value={currency}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
-                {currencies.map((currency) => (
-                  <option key={currency} value={currency}>
-                    {currency}
-                  </option>
-                ))}
-              </select>
+                value={{ label: currency, value: currency }}
+                onChange={(selectedOption) => setCurrency(selectedOption.value)}
+                options={currencies.map((currency) => ({
+                  value: currency,
+                  label: currency,
+                }))}
+                placeholder="Select currency"
+                className="rounded-md p-1 text-black"
+                styles={{
+                  option: (styles, { isFocused }) => {
+                    return {
+                      ...styles,
+                      backgroundColor: isFocused ? "#545454" : null,
+                      color: isFocused ? "white" : null,
+                    };
+                  },
+                }}
+              />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="stock_price"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Stock Price
               </label>
@@ -329,13 +358,13 @@ const AddStockModal = ({ style, className, getStocks }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 required
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-black"
               />
             </div>
             <div className="mb-2">
               <label
                 htmlFor="total_cost"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-200"
               >
                 Total Cost
               </label>
@@ -345,7 +374,7 @@ const AddStockModal = ({ style, className, getStocks }) => {
                 name="total_cost"
                 value={displayTotal}
                 readOnly
-                className="w-full px-3 py-2 rounded-md bg-gray-200 text-gray-700 cursor-not-allowed"
+                className="w-full px-3 py-2 rounded-md bg-gray-200 cursor-not-allowed text-black"
               />
             </div>
           </form>
@@ -354,14 +383,14 @@ const AddStockModal = ({ style, className, getStocks }) => {
           <Button
             onClick={handleClose}
             variant="outlined"
-            className="border border-gray-300 hover:border-gray-500 text-gray-700 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="border border-gray-300 hover:border-gray-500 text-gray-200 py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancel
           </Button>
           <Button
             form="addStockForm"
             type="submit"
-            className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
+            className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 "
           >
             Add Stock
           </Button>
