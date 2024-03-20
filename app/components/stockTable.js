@@ -36,7 +36,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
         return new Date(stock[field.name]).toLocaleDateString();
       case 6:
       case 7:
-        return formatNumberAsCurrency(stock[field.name]);
+        return formatNumberAsCurrency(stock[field.name], stock.currency);
       default:
         return stock[field.name];
     }
