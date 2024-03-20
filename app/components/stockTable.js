@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,6 +11,8 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import dayjs from "dayjs";
+import Select from "react-select";
 
 import AddStockModal from "./addStockModal";
 import DeleteStockButton from "./deleteStockButton";
@@ -19,6 +21,45 @@ import { formatNumberAsCurrency } from "../helpers/localizationHelper";
 const StockTable = ({ fields, stocks, getStocks }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filter, setFilter] = useState({ date: "", stock: "", market: "" });
+  const [filteredStocks, setFilteredStocks] = useState([]);
+
+  useEffect(() => {
+    const newFilteredStocks = stocks.filter((stock) => {
+      const dateMatches =
+        !filter.date ||
+        dayjs(stock.transaction_date).format("YYYY-MM-DD") ===
+          dayjs(filter.date).format("YYYY-MM-DD");
+      const stockMatches =
+        !filter.stock ||
+        stock.stock.toLowerCase().includes(filter.stock.toLowerCase());
+      const marketMatches =
+        !filter.market ||
+        stock.market.toLowerCase().includes(filter.market.toLowerCase());
+
+      return dateMatches && stockMatches && marketMatches;
+    });
+
+    setFilteredStocks(newFilteredStocks);
+  }, [filter, stocks]);
+
+  const handleFilterChange = (name, value) => {
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      [name]:
+        value instanceof Object && value.hasOwnProperty("value")
+          ? value.value
+          : value,
+    }));
+  };
+
+  const stockOptions = [...new Set(stocks.map((stock) => stock.stock))].map(
+    (stock) => ({ value: stock, label: stock })
+  );
+  const marketOptions = [...new Set(stocks.map((stock) => stock.market))].map(
+    (market) => ({ value: market, label: market })
+  );
+
   const formatTableCell = (index, field, stock) => {
     switch (index) {
       case 1:
@@ -41,12 +82,49 @@ const StockTable = ({ fields, stocks, getStocks }) => {
         return stock[field.name];
     }
   };
+
   if (!stocks || stocks.length === 0) {
     return <EmptyStocks getStocks={getStocks} />;
   }
 
   return (
     <TableContainer component={Paper} style={{ height: "100%" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "1rem",
+          marginBottom: "1rem",
+        }}
+      >
+        <input
+          type="date"
+          name="date"
+          value={filter.date}
+          onChange={(event) => handleFilterChange("date", event.target.value)}
+        />
+        <Select
+          name="stock"
+          options={stockOptions}
+          value={stockOptions.find((option) => option.value === filter.stock)}
+          onChange={(selectedOption) =>
+            handleFilterChange("stock", selectedOption)
+          }
+          isClearable
+          placeholder="Filter by stock"
+        />
+        <Select
+          name="market"
+          options={marketOptions}
+          value={marketOptions.find((option) => option.value === filter.market)}
+          onChange={(selectedOption) =>
+            handleFilterChange("market", selectedOption)
+          }
+          isClearable
+          placeholder="Filter by market"
+        />
+      </div>
       <Table>
         <TableHead>
           <TableRow>
@@ -62,7 +140,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stocks
+          {filteredStocks
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((stock, index) => (
               <TableRow key={index}>
