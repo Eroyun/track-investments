@@ -8,7 +8,7 @@ import { deleteTransactions } from "../helpers/hooks";
 
 const DeleteStockButton = ({
   transactionIDs,
-  getTransactions,
+  getData,
   className,
   style,
   buttonName,
@@ -22,7 +22,7 @@ const DeleteStockButton = ({
         throw new Error(data.error || response.statusText);
       }
 
-      getTransactions();
+      getData();
     } catch (error) {
       alert(error.message); // Alert user about error
     }

@@ -3,10 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import StockTable from "./components/transactionsTable";
+import DataTable from "./components/dataTable";
 
 import { createTables } from "./helpers/hooks";
-import { DataObject } from "@mui/icons-material";
 
 const Home = () => {
   const [holdings, setHoldings] = useState([]);
@@ -15,7 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     if (holdings.length === 0) {
-      getHoldings();
+      getData();
     }
   }, []);
 
@@ -32,7 +31,7 @@ const Home = () => {
     }
   };
 
-  const getHoldings = async () => {
+  const getData = async () => {
     try {
       const response = await fetch("/api/holdings/get-holdings");
       if (!response.ok) {
@@ -42,7 +41,7 @@ const Home = () => {
             throw new Error(res.error || "Failed to create tables.");
           }
           setCallCount(callCount + 1);
-          return getTransactions();
+          return getData();
         }
       }
       const data = await response.json();
@@ -62,7 +61,16 @@ const Home = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full"></div>
+      <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
+        {fields && holdings && (
+          <DataTable
+            fields={fields}
+            rows={holdings}
+            getData={getData}
+            dataType={"holdings"}
+          />
+        )}
+      </div>
     </ThemeProvider>
   );
 };

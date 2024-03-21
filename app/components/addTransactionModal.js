@@ -20,7 +20,7 @@ import {
   formatNumberAsCurrency,
 } from "../helpers/localizationHelper";
 
-const AddStockModal = ({ style, className, getTransactions }) => {
+const AddTransactionModal = ({ style, className, getData }) => {
   const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState(currencies[0]);
   const [market, setMarket] = useState(markets[0]);
@@ -58,7 +58,7 @@ const AddStockModal = ({ style, className, getTransactions }) => {
         throw new Error(data.error || response.statusText);
       }
       resetForm();
-      getTransactions();
+      getData();
       setOpen(false);
     } catch (error) {
       alert(error.message);
@@ -401,4 +401,4 @@ const AddStockModal = ({ style, className, getTransactions }) => {
   );
 };
 
-export default AddStockModal;
+export default AddTransactionModal;

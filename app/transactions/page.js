@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import StockTable from "../components/transactionsTable";
+import DataTable from "../components/dataTable";
 
 const Home = () => {
   const [transactions, setTransactions] = useState([]);
   const [fields, setFields] = useState([]);
 
-  const getTransactions = async () => {
+  const getData = async () => {
     try {
       const response = await fetch("/api/transactions/get-transactions");
       const data = await response.json();
@@ -22,7 +22,7 @@ const Home = () => {
 
   useEffect(() => {
     if (transactions.length === 0) {
-      getTransactions();
+      getData();
     }
   }, []);
 
@@ -37,10 +37,11 @@ const Home = () => {
       <CssBaseline />
       <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
         {fields && transactions && (
-          <StockTable
+          <DataTable
             fields={fields}
             transactions={transactions}
-            getTransactions={getTransactions}
+            getData={getData}
+            dataType={"transactions"}
           />
         )}
       </div>

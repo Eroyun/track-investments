@@ -12,6 +12,7 @@ export async function GET() {
         stock_price DECIMAL(10, 2),
         total_cost DECIMAL(10, 2),
         market VARCHAR(12),
+        profit_loss DECIMAL(10, 2),
         sold BOOLEAN
     );`;
     return NextResponse.json({ result }, { status: 200 });
