@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import Select from "react-select";
 
-import AddStockModal from "./addStockModal";
+import AddStockModal from "./addTransactionModal";
 import DeleteStockButton from "./deleteStockButton";
 import { formatNumberAsCurrency } from "../helpers/localizationHelper";
 
@@ -183,7 +183,6 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
         getRowId={(row) => row.transaction_id}
       />
       <div className="flex justify-between items-center my-4">
-        {console.log(selectedRows)}
         {selectedRows.length > 0 ? (
           <DeleteStockButton
             transactionIDs={selectedRows}

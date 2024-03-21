@@ -53,7 +53,6 @@ const AddStockModal = ({ style, className, getTransactions }) => {
         transactionType,
         market
       );
-
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || response.statusText);
@@ -185,7 +184,7 @@ const AddStockModal = ({ style, className, getTransactions }) => {
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
         <DialogTitle>
-          Add Stock
+          Add Transaction
           <IconButton
             aria-label="close"
             onClick={handleClose}
@@ -394,7 +393,7 @@ const AddStockModal = ({ style, className, getTransactions }) => {
             type="submit"
             className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 "
           >
-            Add Stock
+            Add Transaction
           </Button>
         </DialogActions>
       </Dialog>
