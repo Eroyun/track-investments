@@ -6,18 +6,18 @@ export async function POST(req) {
 
   try {
     const res = await sql`
-      DELETE FROM stocks
+      DELETE FROM transactions
       WHERE transaction_id = ${transaction_id};
     `;
     if (!res) {
-      throw new Error("Failed to delete stock");
+      throw new Error("Failed to delete transaction.");
     }
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
   return NextResponse.json(
     {
-      message: "Stock deleted successfully",
+      message: "Transaction deleted successfully",
     },
     { status: 200 }
   );

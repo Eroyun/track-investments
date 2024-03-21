@@ -26,14 +26,14 @@ const darkTheme = createTheme({
   },
 });
 
-const StockTable = ({ fields, stocks, getStocks }) => {
+const StockTable = ({ fields, transactions, getTransactions }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filter, setFilter] = useState({ date: "", stock: "", market: "" });
-  const [filteredStocks, setFilteredStocks] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
 
   useEffect(() => {
-    const newFilteredStocks = stocks.filter((stock) => {
+    const newFilteredTransactions = transactions.filter((stock) => {
       const dateMatches =
         !filter.date ||
         dayjs(stock.transaction_date).format("YYYY-MM-DD") ===
@@ -48,8 +48,8 @@ const StockTable = ({ fields, stocks, getStocks }) => {
       return dateMatches && stockMatches && marketMatches;
     });
 
-    setFilteredStocks(newFilteredStocks);
-  }, [filter, stocks]);
+    setFilteredTransactions(newFilteredTransactions);
+  }, [filter, transactions]);
 
   const handleFilterChange = (name, value) => {
     setFilter((prevFilter) => ({
@@ -61,12 +61,12 @@ const StockTable = ({ fields, stocks, getStocks }) => {
     }));
   };
 
-  const stockOptions = [...new Set(stocks.map((stock) => stock.stock))].map(
-    (stock) => ({ value: stock, label: stock })
-  );
-  const marketOptions = [...new Set(stocks.map((stock) => stock.market))].map(
-    (market) => ({ value: market, label: market })
-  );
+  const stockOptions = [
+    ...new Set(transactions.map((stock) => stock.stock)),
+  ].map((stock) => ({ value: stock, label: stock }));
+  const marketOptions = [
+    ...new Set(transactions.map((stock) => stock.market)),
+  ].map((market) => ({ value: market, label: market }));
 
   const formatTableCell = (index, field, stock) => {
     switch (index) {
@@ -91,8 +91,8 @@ const StockTable = ({ fields, stocks, getStocks }) => {
     }
   };
 
-  if (!stocks || stocks.length === 0) {
-    return <EmptyStocks getStocks={getStocks} />;
+  if (!transactions || transactions.length === 0) {
+    return <EmptyTransactions getTransactions={getTransactions} />;
   }
 
   return (
@@ -166,7 +166,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredStocks
+            {filteredTransactions
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((stock, index) => (
                 <TableRow key={index}>
@@ -180,7 +180,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
                   <TableCell>
                     <DeleteStockButton
                       transactionID={stock.transaction_id}
-                      getStocks={getStocks}
+                      getTransactions={getTransactions}
                     />
                   </TableCell>
                 </TableRow>
@@ -190,7 +190,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
         <div className="flex justify-between items-center my-4">
           <TablePagination
             component="div"
-            count={stocks.length}
+            count={transactions.length}
             page={page}
             onPageChange={(event, newPage) => setPage(newPage)}
             rowsPerPage={rowsPerPage}
@@ -200,7 +200,7 @@ const StockTable = ({ fields, stocks, getStocks }) => {
             className="ml-4"
           />
           <div className="mr-1">
-            <AddStockModal getStocks={getStocks} />
+            <AddStockModal getTransactions={getTransactions} />
           </div>
         </div>
       </TableContainer>
@@ -208,14 +208,17 @@ const StockTable = ({ fields, stocks, getStocks }) => {
   );
 };
 
-const EmptyStocks = ({ getStocks }) => {
+const EmptyTransactions = ({ getTransactions }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-200 p-10 space-y-5">
       <h2 className="text-2xl text-gray-700">No transactions available.</h2>
       <p className="text-lg text-gray-500">
         Please add transactions to view them here.
       </p>
-      <AddStockModal getStocks={getStocks} style={{ marginLeft: "4rem" }} />
+      <AddStockModal
+        getTransactions={getTransactions}
+        style={{ marginLeft: "4rem" }}
+      />
     </div>
   );
 };

@@ -4,10 +4,10 @@ import React from "react";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const DeleteStockButton = ({ transactionID, getStocks }) => {
+const DeleteStockButton = ({ transactionID, getTransactions }) => {
   const handleSubmit = async () => {
     try {
-      const response = await fetch("/api/delete-stock", {
+      const response = await fetch("/api/transactions/delete-transaction", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -20,7 +20,7 @@ const DeleteStockButton = ({ transactionID, getStocks }) => {
         throw new Error(data.error || response.statusText);
       }
 
-      getStocks();
+      getTransactions();
     } catch (error) {
       alert(error.message); // Alert user about error
     }

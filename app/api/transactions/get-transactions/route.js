@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic"; // Resolves the issue with Vercel's cach
 export async function GET() {
   try {
     const results = await sql`
-      SELECT * FROM stocks
+      SELECT * FROM transactions
       ORDER BY transaction_date DESC, stock ASC
     `;
     return NextResponse.json(results);

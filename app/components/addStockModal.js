@@ -13,13 +13,14 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";
 
+import { addTransaction } from "../helpers/hookHelpers";
 import {
   currencies,
   markets,
   formatNumberAsCurrency,
 } from "../helpers/localizationHelper";
 
-const AddStockModal = ({ style, className, getStocks }) => {
+const AddStockModal = ({ style, className, getTransactions }) => {
   const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState(currencies[0]);
   const [market, setMarket] = useState(markets[0]);
@@ -42,27 +43,23 @@ const AddStockModal = ({ style, className, getStocks }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/add-stock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          transaction_date: transactionDate,
-          stock,
-          stock_quantity: stockQuantity,
-          currency,
-          stock_price: stockPrice,
-          total_cost: totalAmount,
-          transaction_type: transactionType,
-          market,
-        }),
-      });
+      const response = addTransaction(
+        transactionDate,
+        stock,
+        stockQuantity,
+        currency,
+        stockPrice,
+        totalAmount,
+        transactionType,
+        market
+      );
 
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || response.statusText);
       }
 
-      getStocks();
+      getTransactions();
       setOpen(false);
       resetForm();
     } catch (error) {
