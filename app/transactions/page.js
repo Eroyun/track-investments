@@ -13,7 +13,6 @@ const Home = () => {
   const getTransactions = async () => {
     try {
       const response = await fetch("/api/transactions/get-transactions");
-      console.log(response);
       if (!response.ok) {
         const res = await fetch("/api/transactions/create-table");
         if (!res.ok) {

@@ -1,16 +1,5 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Paper,
-} from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import Select from "react-select";
 
@@ -20,9 +9,10 @@ import { formatNumberAsCurrency } from "../helpers/localizationHelper";
 
 const StockTable = ({ fields, transactions, getTransactions }) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [filter, setFilter] = useState({ date: "", stock: "", market: "" });
   const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     const newFilteredTransactions = transactions.filter((stock) => {
@@ -41,6 +31,7 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
     });
 
     setFilteredTransactions(newFilteredTransactions);
+    setSelectedRows([]);
   }, [filter, transactions]);
 
   const handleFilterChange = (name, value) => {
@@ -53,6 +44,10 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
     }));
   };
 
+  const handleRowSelection = (e) => {
+    setSelectedRows(e || []);
+  };
+
   const stockOptions = [
     ...new Set(transactions.map((stock) => stock.stock)),
   ].map((stock) => ({ value: stock, label: stock }));
@@ -62,7 +57,7 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
 
   const formatTableCell = (index, field, stock) => {
     switch (index) {
-      case 1:
+      case 0:
         return (
           <span
             style={{
@@ -73,22 +68,55 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
             {stock[field.name]}
           </span>
         );
-      case 2:
+      case 1:
         return new Date(stock[field.name]).toLocaleDateString();
+      case 5:
       case 6:
-      case 7:
         return formatNumberAsCurrency(stock[field.name], stock.currency);
       default:
         return stock[field.name];
     }
   };
 
+  const columns = fields
+    .filter((field, index) => index !== 0)
+    .map((field, index) => ({
+      field: field.name,
+      headerName: field.name
+        .replace("_", " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase()),
+      width:
+        Math.max(
+          ...transactions.map((t) => (`${t[field.name]}` || "").length),
+          16
+        ) * 8,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => formatTableCell(index, field, params.row),
+    }));
+
+  columns.push({
+    field: "delete",
+    headerName: "",
+    sortable: false,
+    width: 150,
+    align: "center",
+    headerAlign: "center",
+    renderCell: (params) => (
+      <DeleteStockButton
+        transactionIDs={[params.row.transaction_id]}
+        getTransactions={getTransactions}
+        className={"bg-gray-200"}
+      />
+    ),
+  });
+
   if (!transactions || transactions.length === 0) {
     return <EmptyTransactions getTransactions={getTransactions} />;
   }
 
   return (
-    <TableContainer component={Paper} style={{ height: "100%" }}>
+    <div style={{ height: "100vh", width: "100%" }}>
       <div className="flex items-center justify-end gap-2 m-2">
         <input
           type="date"
@@ -138,60 +166,45 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
           }}
         />
       </div>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {fields.map((field, index) =>
-              index === 0 ? null : (
-                <TableCell align="center" key={index}>
-                  {field.name
-                    .replace("_", " ")
-                    .replace(/\b\w/g, (l) => l.toUpperCase())}
-                </TableCell>
-              )
-            )}
-            <TableCell />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredTransactions
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((stock, index) => (
-              <TableRow key={index}>
-                {fields.map((field, index) =>
-                  index === 0 ? null : (
-                    <TableCell align="center" key={index}>
-                      {formatTableCell(index, field, stock)}
-                    </TableCell>
-                  )
-                )}
-                <TableCell>
-                  <DeleteStockButton
-                    transactionID={stock.transaction_id}
-                    getTransactions={getTransactions}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+      <DataGrid
+        style={{ height: "80%" }}
+        rows={filteredTransactions}
+        columns={columns}
+        paginationModel={{
+          pageSize: rowsPerPage,
+          page: page,
+        }}
+        onPaginationModelChange={(newModel) => {
+          setRowsPerPage(newModel.pageSize);
+          setPage(newModel.page);
+        }}
+        checkboxSelection
+        onRowSelectionModelChange={handleRowSelection}
+        getRowId={(row) => row.transaction_id}
+      />
       <div className="flex justify-between items-center my-4">
-        <TablePagination
-          component="div"
-          count={transactions.length}
-          page={page}
-          onPageChange={(event, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(event) =>
-            setRowsPerPage(parseInt(event.target.value, 10))
-          }
-          className="ml-4"
-        />
-        <div className="mr-1">
-          <AddStockModal getTransactions={getTransactions} />
-        </div>
+        {console.log(selectedRows)}
+        {selectedRows.length > 0 ? (
+          <DeleteStockButton
+            transactionIDs={selectedRows}
+            getTransactions={getTransactions}
+            style={{
+              backgroundColor: "rgb(255, 0, 0) !important",
+              "&:hover": {
+                backgroundColor: "rgb(150, 0, 0) !important",
+              },
+              height: "2.75rem",
+              mt: -1,
+              color: "white",
+            }}
+            buttonName={"Delete Selected"}
+          />
+        ) : (
+          <div style={{ width: "9rem" }} /> // Empty div to take up space
+        )}
+        <AddStockModal getTransactions={getTransactions} />
       </div>
-    </TableContainer>
+    </div>
   );
 };
 
@@ -205,10 +218,7 @@ const EmptyTransactions = ({ getTransactions }) => {
       <p className="text-lg text-gray-300">
         Please add transactions to view them here.
       </p>
-      <AddStockModal
-        getTransactions={getTransactions}
-        style={{ marginLeft: "4rem" }}
-      />
+      <AddStockModal getTransactions={getTransactions} />
     </div>
   );
 };

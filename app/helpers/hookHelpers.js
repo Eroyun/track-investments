@@ -26,12 +26,12 @@ const addTransaction = async (
   return response;
 };
 
-const deleteTransaction = async (transactionID) => {
+const deleteTransactions = async (transactionIDs) => {
   const response = await fetch("/api/transactions/delete-transaction", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      transaction_id: transactionID,
+      transaction_ids: transactionIDs,
     }),
   });
 
@@ -40,5 +40,5 @@ const deleteTransaction = async (transactionID) => {
 
 module.exports = {
   addTransaction,
-  deleteTransaction,
+  deleteTransactions,
 };

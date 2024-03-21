@@ -67,11 +67,17 @@ const AddStockModal = ({ style, className, getTransactions }) => {
   };
 
   const resetForm = () => {
+    setTransactionType("BUY");
+    setCurrency(currencies[0]);
+    setMarket(markets[0]);
     setTransactionDate("");
     setStock("");
     setStockQuantity(0);
     setStockPrice(0);
     setTotalAmount(0);
+    setDisplayQuantity("0");
+    setDisplayPrice("0");
+    setDisplayTotal("");
   };
 
   const handleChange = (e) => {
@@ -172,7 +178,7 @@ const AddStockModal = ({ style, className, getTransactions }) => {
       <Button
         variant="contained"
         onClick={handleOpen}
-        className="bg-blue-500 hover:bg-blue-700 text-white py-2.5 px-7 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 w-32 flex justify-center items-center mr-12"
+        className="bg-blue-500 hover:bg-blue-700 text-white py-2.5 px-7 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 w-32 flex justify-center items-center"
       >
         <AddIcon />
         Add

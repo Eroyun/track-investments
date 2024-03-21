@@ -4,12 +4,18 @@ import React from "react";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { deleteTransaction } from "../helpers/hookHelpers";
+import { deleteTransactions } from "../helpers/hookHelpers";
 
-const DeleteStockButton = ({ transactionID, getTransactions }) => {
+const DeleteStockButton = ({
+  transactionIDs,
+  getTransactions,
+  className,
+  style,
+  buttonName,
+}) => {
   const handleSubmit = async () => {
     try {
-      const response = await deleteTransaction(transactionID);
+      const response = await deleteTransactions(transactionIDs);
 
       if (!response.ok) {
         const data = await response.json();
@@ -23,16 +29,15 @@ const DeleteStockButton = ({ transactionID, getTransactions }) => {
   };
 
   return (
-    <div>
-      <Button
-        variant="contained"
-        onClick={handleSubmit}
-        className="bg-gray-200 flex items-center justify-center" // Tailwind CSS classes
-        startIcon={<DeleteIcon />}
-      >
-        Delete
-      </Button>
-    </div>
+    <Button
+      variant="contained"
+      onClick={handleSubmit}
+      className={`flex items-center justify-center ${className}`}
+      sx={style}
+      startIcon={<DeleteIcon />}
+    >
+      {buttonName || "Delete"}
+    </Button>
   );
 };
 
