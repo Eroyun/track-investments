@@ -4,16 +4,12 @@ import React from "react";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import { deleteTransaction } from "../helpers/hookHelpers";
+
 const DeleteStockButton = ({ transactionID, getTransactions }) => {
   const handleSubmit = async () => {
     try {
-      const response = await fetch("/api/transactions/delete-transaction", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          transaction_id: transactionID,
-        }),
-      });
+      const response = await deleteTransaction(transactionID);
 
       if (!response.ok) {
         const data = await response.json();

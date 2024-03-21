@@ -43,7 +43,7 @@ const AddStockModal = ({ style, className, getTransactions }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = addTransaction(
+      const response = await addTransaction(
         transactionDate,
         stock,
         stockQuantity,
@@ -58,10 +58,9 @@ const AddStockModal = ({ style, className, getTransactions }) => {
         const data = await response.json();
         throw new Error(data.error || response.statusText);
       }
-
+      resetForm();
       getTransactions();
       setOpen(false);
-      resetForm();
     } catch (error) {
       alert(error.message);
     }

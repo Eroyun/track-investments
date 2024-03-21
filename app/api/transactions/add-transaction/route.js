@@ -19,10 +19,9 @@ export async function POST(req) {
   try {
     // Check if there is an existing row with the same stock but different currency
     const existingTransaction = await sql`
-      SELECT * FROM transactions WHERE stock = ${stock} AND currency != ${currency};
+      SELECT * FROM transactions WHERE stock = ${stock} AND currency != ${currency} AND market = ${market};
     `;
-
-    if (existingTransaction.count > 0) {
+    if (existingTransaction.rowCount > 0) {
       return NextResponse.json(
         {
           error:

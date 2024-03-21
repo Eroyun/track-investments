@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import StockTable from "../components/stockTable";
 
 const Home = () => {
@@ -12,6 +13,7 @@ const Home = () => {
   const getTransactions = async () => {
     try {
       const response = await fetch("/api/transactions/get-transactions");
+      console.log(response);
       if (!response.ok) {
         const res = await fetch("/api/transactions/create-table");
         if (!res.ok) {
@@ -37,14 +39,23 @@ const Home = () => {
     }
   }, []);
 
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
+
   return (
-    <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
-      <StockTable
-        fields={fields}
-        transactions={transactions}
-        getTransactions={getTransactions}
-      />
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
+        <StockTable
+          fields={fields}
+          transactions={transactions}
+          getTransactions={getTransactions}
+        />
+      </div>
+    </ThemeProvider>
   );
 };
 

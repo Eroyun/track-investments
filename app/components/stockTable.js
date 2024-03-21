@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import {
   Table,
   TableBody,
@@ -19,12 +17,6 @@ import Select from "react-select";
 import AddStockModal from "./addStockModal";
 import DeleteStockButton from "./deleteStockButton";
 import { formatNumberAsCurrency } from "../helpers/localizationHelper";
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
 
 const StockTable = ({ fields, transactions, getTransactions }) => {
   const [page, setPage] = useState(0);
@@ -96,123 +88,121 @@ const StockTable = ({ fields, transactions, getTransactions }) => {
   }
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <TableContainer component={Paper} style={{ height: "100%" }}>
-        <div className="flex items-center justify-end gap-2 m-2">
-          <input
-            type="date"
-            name="date"
-            value={filter.date}
-            onChange={(event) => handleFilterChange("date", event.target.value)}
-            className="rounded-md p-1 text-black placeholder-gray-800 selection-gray-800"
-          />
-          <Select
-            name="stock"
-            options={stockOptions}
-            value={stockOptions.find((option) => option.value === filter.stock)}
-            onChange={(selectedOption) =>
-              handleFilterChange("stock", selectedOption)
-            }
-            isClearable
-            placeholder="Filter by stock"
-            className="rounded-md p-1 text-black"
-            styles={{
-              option: (styles, { isFocused }) => {
-                return {
-                  ...styles,
-                  backgroundColor: isFocused ? "#1c1c1c" : null,
-                  color: isFocused ? "white" : null,
-                };
-              },
-            }}
-          />
-          <Select
-            name="market"
-            options={marketOptions}
-            value={marketOptions.find(
-              (option) => option.value === filter.market
+    <TableContainer component={Paper} style={{ height: "100%" }}>
+      <div className="flex items-center justify-end gap-2 m-2">
+        <input
+          type="date"
+          name="date"
+          value={filter.date}
+          onChange={(event) => handleFilterChange("date", event.target.value)}
+          className="rounded-md p-1 text-black placeholder-gray-800 selection-gray-800"
+        />
+        <Select
+          name="stock"
+          options={stockOptions}
+          value={stockOptions.find((option) => option.value === filter.stock)}
+          onChange={(selectedOption) =>
+            handleFilterChange("stock", selectedOption)
+          }
+          isClearable
+          placeholder="Filter by stock"
+          className="rounded-md p-1 text-black"
+          styles={{
+            option: (styles, { isFocused }) => {
+              return {
+                ...styles,
+                backgroundColor: isFocused ? "#1c1c1c" : null,
+                color: isFocused ? "white" : null,
+              };
+            },
+          }}
+        />
+        <Select
+          name="market"
+          options={marketOptions}
+          value={marketOptions.find((option) => option.value === filter.market)}
+          onChange={(selectedOption) =>
+            handleFilterChange("market", selectedOption)
+          }
+          isClearable
+          placeholder="Filter by market"
+          className="rounded-md p-1 text-black"
+          styles={{
+            option: (styles, { isFocused }) => {
+              return {
+                ...styles,
+                backgroundColor: isFocused ? "#1c1c1c" : null,
+                color: isFocused ? "white" : null,
+              };
+            },
+          }}
+        />
+      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {fields.map((field, index) =>
+              index === 0 ? null : (
+                <TableCell align="center" key={index}>
+                  {field.name
+                    .replace("_", " ")
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                </TableCell>
+              )
             )}
-            onChange={(selectedOption) =>
-              handleFilterChange("market", selectedOption)
-            }
-            isClearable
-            placeholder="Filter by market"
-            className="rounded-md p-1 text-black"
-            styles={{
-              option: (styles, { isFocused }) => {
-                return {
-                  ...styles,
-                  backgroundColor: isFocused ? "#1c1c1c" : null,
-                  color: isFocused ? "white" : null,
-                };
-              },
-            }}
-          />
+            <TableCell />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filteredTransactions
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((stock, index) => (
+              <TableRow key={index}>
+                {fields.map((field, index) =>
+                  index === 0 ? null : (
+                    <TableCell align="center" key={index}>
+                      {formatTableCell(index, field, stock)}
+                    </TableCell>
+                  )
+                )}
+                <TableCell>
+                  <DeleteStockButton
+                    transactionID={stock.transaction_id}
+                    getTransactions={getTransactions}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+      <div className="flex justify-between items-center my-4">
+        <TablePagination
+          component="div"
+          count={transactions.length}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(event) =>
+            setRowsPerPage(parseInt(event.target.value, 10))
+          }
+          className="ml-4"
+        />
+        <div className="mr-1">
+          <AddStockModal getTransactions={getTransactions} />
         </div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {fields.map((field, index) =>
-                index === 0 ? null : (
-                  <TableCell align="center" key={index}>
-                    {field.name
-                      .replace("_", " ")
-                      .replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </TableCell>
-                )
-              )}
-              <TableCell />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredTransactions
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((stock, index) => (
-                <TableRow key={index}>
-                  {fields.map((field, index) =>
-                    index === 0 ? null : (
-                      <TableCell align="center" key={index}>
-                        {formatTableCell(index, field, stock)}
-                      </TableCell>
-                    )
-                  )}
-                  <TableCell>
-                    <DeleteStockButton
-                      transactionID={stock.transaction_id}
-                      getTransactions={getTransactions}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-        <div className="flex justify-between items-center my-4">
-          <TablePagination
-            component="div"
-            count={transactions.length}
-            page={page}
-            onPageChange={(event, newPage) => setPage(newPage)}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={(event) =>
-              setRowsPerPage(parseInt(event.target.value, 10))
-            }
-            className="ml-4"
-          />
-          <div className="mr-1">
-            <AddStockModal getTransactions={getTransactions} />
-          </div>
-        </div>
-      </TableContainer>
-    </ThemeProvider>
+      </div>
+    </TableContainer>
   );
 };
 
 const EmptyTransactions = ({ getTransactions }) => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-200 p-10 space-y-5">
-      <h2 className="text-2xl text-gray-700">No transactions available.</h2>
-      <p className="text-lg text-gray-500">
+    <div
+      style={{ backgroundColor: "#1c1c1c" }}
+      className="flex flex-col items-center justify-center h-screen p-10 space-y-5"
+    >
+      <h2 className="text-2xl text-gray-100">No transactions available.</h2>
+      <p className="text-lg text-gray-300">
         Please add transactions to view them here.
       </p>
       <AddStockModal
