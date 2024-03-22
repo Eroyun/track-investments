@@ -39,7 +39,7 @@ const Home = () => {
         {fields && transactions && (
           <DataTable
             fields={fields}
-            transactions={transactions}
+            rows={transactions}
             getData={getData}
             dataType={"transactions"}
           />

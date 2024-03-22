@@ -45,6 +45,7 @@ export async function POST(req) {
                 stock_price,
                 total_cost,
                 market,
+                profit_loss,
                 sold
               ) VALUES (
                 ${stock},
@@ -53,12 +54,14 @@ export async function POST(req) {
                 ${stock_price},
                 ${total_cost},
                 ${market},
+                ${0},
                 false
               )
               ON CONFLICT (stock, currency, market) DO UPDATE SET
                 stock_quantity = holdings.stock_quantity + EXCLUDED.stock_quantity,
                 total_cost = holdings.total_cost + EXCLUDED.total_cost,
                 stock_price = (holdings.total_cost + EXCLUDED.total_cost) / (holdings.stock_quantity + EXCLUDED.stock_quantity),
+                profit_loss = holdings.profit_loss,
                 sold = false;
             `;
     } else if (transaction_type.toLowerCase() === "sell") {
@@ -76,8 +79,9 @@ export async function POST(req) {
       res = await sql`
               UPDATE holdings SET
                 stock_quantity = holdings.stock_quantity - ${stock_quantity},
-                total_cost = holdings.total_cost - ${total_cost},
-                stock_price = (holdings.total_cost - ${total_cost}) / (holdings.stock_quantity - ${stock_quantity}),
+                total_cost = (holdings.stock_quantity - ${stock_quantity}) * ${stock_price} ,
+                stock_price = ${stock_price},
+                profit_loss = (holdings.stock_price - ${stock_price}) * ${stock_quantity},
                 sold = (holdings.stock_quantity - ${stock_quantity}) <= 0
               WHERE stock = ${stock} AND currency = ${currency} AND market = ${market};
             `;
