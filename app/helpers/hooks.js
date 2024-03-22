@@ -141,10 +141,17 @@ const createTables = async () => {
       throw new Error("Failed to create tables. Please refresh the page.");
     }
 
-    return NextResponse.json(resHoldings, resTransactions);
+    const response = NextResponse.json(resHoldings, resTransactions);
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    return data;
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return { error: error.message };
   }
 };
 

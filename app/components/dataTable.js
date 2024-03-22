@@ -18,7 +18,7 @@ const DataTable = ({ fields, rows, getData, dataType }) => {
   const [filter, setFilter] = useState({ date: "", stock: "", market: "" });
   const [filteredData, setFilteredData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-
+  const [columns, setColumns] = useState([]);
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
@@ -26,33 +26,33 @@ const DataTable = ({ fields, rows, getData, dataType }) => {
     }, 3000);
 
     if (rows && rows.length > 0) {
+      setColumns(createColumns(fields, rows, dataType, getData));
+      const newFilteredData = rows.filter((stock) => {
+        const dateMatches =
+          !filter.date ||
+          dayjs(stock.transaction_date).format("YYYY-MM-DD") ===
+            dayjs(filter.date).format("YYYY-MM-DD");
+        const stockMatches =
+          !filter.stock ||
+          stock.stock.toLowerCase().includes(filter.stock.toLowerCase());
+        const marketMatches =
+          !filter.market ||
+          stock.market.toLowerCase().includes(filter.market.toLowerCase());
+
+        return dateMatches && stockMatches && marketMatches;
+      });
+
+      setFilteredData(newFilteredData);
       clearTimeout(timer);
       setIsLoading(false);
     }
-    const newFilteredData = rows.filter((stock) => {
-      const dateMatches =
-        !filter.date ||
-        dayjs(stock.transaction_date).format("YYYY-MM-DD") ===
-          dayjs(filter.date).format("YYYY-MM-DD");
-      const stockMatches =
-        !filter.stock ||
-        stock.stock.toLowerCase().includes(filter.stock.toLowerCase());
-      const marketMatches =
-        !filter.market ||
-        stock.market.toLowerCase().includes(filter.market.toLowerCase());
 
-      return dateMatches && stockMatches && marketMatches;
-    });
-
-    setFilteredData(newFilteredData);
     setSelectedRows([]);
   }, [filter, rows]);
 
   const handleRowSelection = (e) => {
     setSelectedRows(e || []);
   };
-
-  const columns = createColumns(fields, rows, dataType, getData);
 
   if (isLoading) {
     return (
