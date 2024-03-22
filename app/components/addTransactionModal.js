@@ -18,6 +18,7 @@ import {
   currencies,
   markets,
   formatNumberAsCurrency,
+  revertCurrencyFormat,
 } from "../helpers/localizationHelper";
 
 const AddTransactionModal = ({ style, className, getData }) => {
@@ -42,6 +43,12 @@ const AddTransactionModal = ({ style, className, getData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (totalAmount === 0) {
+      alert("Total amount cannot be 0.");
+      return;
+    }
+
     try {
       const response = await addTransaction(
         transactionDate,
@@ -134,7 +141,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
         break;
       case "stock_price":
         if (value !== "") {
-          const parsedValue = parseFloat(value);
+          const parsedValue = revertCurrencyFormat(value, currency);
           if (!isNaN(parsedValue)) {
             setStockPrice(parsedValue);
             setDisplayPrice(formatNumberAsCurrency(parsedValue, currency));
@@ -148,8 +155,10 @@ const AddTransactionModal = ({ style, className, getData }) => {
         } else {
           if (displayPrice === "") {
             e.target.value = formatNumberAsCurrency(stockPrice, currency);
-          } else {
+          } else if (displayPrice) {
             e.target.value = displayPrice;
+          } else {
+            e.target.value = formatNumberAsCurrency(0, currency);
           }
         }
         break;
@@ -159,7 +168,10 @@ const AddTransactionModal = ({ style, className, getData }) => {
   };
 
   const handleClick = (e) => {
-    if (parseFloat(e.target.value) === 0) {
+    if (
+      parseFloat(e.target.value) === 0 ||
+      formatNumberAsCurrency(0, currency) === e.target.value
+    ) {
       e.target.value = "";
     }
   };

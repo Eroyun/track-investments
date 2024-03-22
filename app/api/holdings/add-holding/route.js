@@ -79,9 +79,8 @@ export async function POST(req) {
       res = await sql`
               UPDATE holdings SET
                 stock_quantity = holdings.stock_quantity - ${stock_quantity},
-                total_cost = (holdings.stock_quantity - ${stock_quantity}) * ${stock_price} ,
-                stock_price = ${stock_price},
-                profit_loss = (holdings.stock_price - ${stock_price}) * ${stock_quantity},
+                total_cost = (holdings.stock_quantity::decimal - ${stock_quantity}) * ${stock_price},
+                profit_loss = holdings.profit_loss + (${stock_quantity} * (${stock_price} - holdings.stock_price)),
                 sold = (holdings.stock_quantity - ${stock_quantity}) <= 0
               WHERE stock = ${stock} AND currency = ${currency} AND market = ${market};
             `;
