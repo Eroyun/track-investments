@@ -77,7 +77,12 @@ const DataTable = ({ fields, rows, getData, dataType }) => {
     <div style={{ height: "100vh", width: "100%" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <NavigationButton dataType={dataType} />
-        <Filter filter={filter} setFilter={setFilter} rows={rows} />
+        <Filter
+          filter={filter}
+          setFilter={setFilter}
+          rows={rows}
+          dataType={dataType}
+        />
       </div>
       <DataGrid
         style={{ height: "80%" }}

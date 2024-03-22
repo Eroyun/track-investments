@@ -3,17 +3,30 @@ import Select from "react-select";
 
 import { createOptions } from "../helpers/dataHelper";
 
-const Filter = ({ filter, handleFilterChange, rows }) => {
+const Filter = ({ filter, setFilter, rows, dataType }) => {
   const { stockOptions, marketOptions } = createOptions(rows);
+
+  const handleFilterChange = (name, value) => {
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      [name]:
+        value instanceof Object && value.hasOwnProperty("value")
+          ? value.value
+          : value,
+    }));
+  };
+
   return (
     <div className="flex items-center justify-end gap-2 m-2">
-      <input
-        type="date"
-        name="date"
-        value={filter.date}
-        onChange={(event) => handleFilterChange("date", event.target.value)}
-        className="rounded-md p-1 text-black placeholder-gray-800 selection-gray-800"
-      />
+      {dataType === "transactions" && (
+        <input
+          type="date"
+          name="date"
+          value={filter.date}
+          onChange={(event) => handleFilterChange("date", event.target.value)}
+          className="rounded-md p-1 text-black placeholder-gray-800 selection-gray-800"
+        />
+      )}
       <Select
         name="stock"
         options={stockOptions}
