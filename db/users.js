@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/postgres-js";
+import { drizzle } from "drizzle-orm/vercel-postgres";
 import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
 import { sql } from "@vercel/postgres";

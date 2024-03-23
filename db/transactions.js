@@ -1,12 +1,19 @@
-import { drizzle, desc, asc } from "drizzle-orm/postgres-js";
-import { pgTable, varchar, integer, decimal } from "drizzle-orm/pg-core";
-import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/vercel-postgres";
+import {
+  pgTable,
+  varchar,
+  integer,
+  decimal,
+  serial,
+  date,
+} from "drizzle-orm/pg-core";
+import { eq, desc, asc } from "drizzle-orm";
 import { sql } from "@vercel/postgres";
 
 const db = drizzle(sql);
 
 export const transactions = pgTable("transactions", {
-  transaction_id: uuid("transaction_id").primaryKey(),
+  transaction_id: serial("transaction_id").primaryKey(),
   transaction_type: varchar("transaction_type", { length: 12 }),
   transaction_date: date("transaction_date"),
   stock: varchar("stock", { length: 255 }),
