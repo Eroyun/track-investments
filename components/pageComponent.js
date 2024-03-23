@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import DataTable from "../components/dataTable";
+import DataTable from "./dataTable";
 import { createTables } from "../helpers/hooks";
 import AuthDialog from "./authDialog";
 

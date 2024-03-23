@@ -9,9 +9,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { register, login } from "../helpers/serverHelper";
-
-const AuthDialog = () => {
+const AuthDialog = ({ register, login }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [open, setOpen] = useState(false);
 
