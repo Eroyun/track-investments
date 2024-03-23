@@ -9,9 +9,13 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material";
+
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Typography from '@mui/material/Typography';
 import CloseIcon from "@mui/icons-material/Close";
 
-import { register, login } from "../helpers/serverHelper";
+import NavBar from "./navBar";
+import AuthForm from './authForm';
 
 const AuthDialog = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -29,87 +33,80 @@ const AuthDialog = () => {
     setOpen(false);
   };
 
+  const darkTheme = createTheme({
+    palette: {
+      primary: {
+        main: '#1A1A1D',
+      },
+      secondary: {
+        main: '#282828',
+      },
+      white: {
+        main: '#FFFFFF'
+      },
+      blue: '#10BBEC',
+      darkBlue: '#011FFF'
+    },
+  });
+
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-screen">
-        <p className="mb-4 text-center text-blue-300">
-          In order to add or see your investments, you need to login.
-        </p>
-        <Button variant="outlined" onClick={handleOpen}>
-          Login
-        </Button>
-      </div>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
-          {isLogin ? "Sign In" : "Sign Up"}
-          <IconButton
-            className="absolute top-2 right-2"
-            color="inherit"
-            onClick={handleClose}
-            aria-label="close"
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent>
-          <form
-            id={isLogin ? "login" : "register"}
-            onSubmit={isLogin ? login : register}
-            className="flex flex-col space-y-4 px-4 py-8 sm:px-16 bg-gray-800 text-white"
-          >
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-xs text-gray-300 uppercase"
+      <ThemeProvider theme={darkTheme}>
+        <div style={{ backgroundColor: darkTheme.palette.primary.main, minHeight: '100vh' }}>
+          <NavBar handleLogin={handleOpen} />
+          <div className="flex items-center justify-center" style={{ padding: '2rem' }}>
+            <div className="flex-1">
+              <Typography
+                variant="h1"
+                sx={{
+                  fontFamily: '"Segoe UI Emoji"',
+                  fontWeight: 700,
+                  color: darkTheme.palette.blue,
+                  mb: 2,
+                }}
               >
-                Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="user@example.com"
-                autoComplete="email"
-                required
-                className="mt-1 block w-full appearance-none rounded-md border border-gray-600 px-3 py-2 placeholder-gray-500 shadow-sm focus:border-white focus:outline-none focus:ring-white sm:text-sm bg-gray-700 text-white"
-              />
+                Welcome Back!
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontFamily: '"Segoe UI Emoji"',
+                  fontWeight: 700,
+                  color: darkTheme.palette.white.main,
+                  mb: 2,
+                }}
+              >
+                To see or add new investments please login with your personal info
+              </Typography>
             </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-xs text-gray-300 uppercase"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="mt-1 block w-full appearance-none rounded-md border border-gray-600 px-3 py-2 placeholder-gray-500 shadow-sm focus:border-white focus:outline-none focus:ring-white sm:text-sm bg-gray-700 text-white"
-              />
+            
+            <div className="flex-1 auth-form-container" style={{ minHeight: '100vh', margin: 'auto' }}>
+              <AuthForm isLogin={isLogin} toggleIsLogin={toggleIsLogin} />
             </div>
-            <p className="text-center text-sm text-gray-300">
-              {isLogin
-                ? "Don't have an account? "
-                : "Already have an account? "}
-              <button
-                type="button"
-                onClick={toggleIsLogin}
-                className="font-semibold text-white"
+          </div>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>
+              {isLogin ? "Sign In" : "Sign Up"}
+              <IconButton
+                className="absolute top-2 right-2"
+                color="inherit"
+                onClick={handleClose}
+                aria-label="close"
               >
-                {isLogin ? "Sign up" : "Sign in"}
-              </button>
-              {isLogin ? " for free." : " instead."}
-            </p>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button type="submit" form={isLogin ? "login" : "register"}>
-            {isLogin ? "Sign In" : "Sign Up"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <AuthForm isLogin={isLogin} toggleIsLogin={toggleIsLogin} />
+            </DialogContent>
+            <DialogActions>
+              <Button type="submit" form={isLogin ? "login" : "register"} variant="contained" color="primary">
+                {isLogin ? "Sign In" : "Sign Up"}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </ThemeProvider>
     </>
   );
 };
