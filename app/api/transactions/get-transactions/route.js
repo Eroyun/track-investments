@@ -1,10 +1,9 @@
 import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
-import { withMiddleware } from "../../middleware";
 
 export const dynamic = "force-dynamic"; // Resolves the issue with Vercel's caching
 
-export const GET = withMiddleware(async () => {
+export async function GET() {
   try {
     const results = await sql`
       SELECT * FROM transactions
@@ -14,4 +13,4 @@ export const GET = withMiddleware(async () => {
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-});
+}

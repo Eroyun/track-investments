@@ -1,8 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
-import { withMiddleware } from "../../middleware";
 
-export const POST = withMiddleware(async (req) => {
+export async function POST(req) {
   const { transaction_ids } = await req.json(); // Expect an array of transaction ids
 
   try {
@@ -24,4 +23,4 @@ export const POST = withMiddleware(async (req) => {
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-});
+}
