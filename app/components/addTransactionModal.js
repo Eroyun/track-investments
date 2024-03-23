@@ -200,7 +200,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
           <IconButton
             aria-label="close"
             onClick={handleClose}
-            style={{ position: "absolute", right: "10px", top: "10px" }}
+            className="absolute top-2 right-2"
           >
             <CloseIcon />
           </IconButton>
