@@ -130,6 +130,7 @@ export const updateHoldings = async (
       .where(eq(holdings.currency, currency))
       .where(eq(holdings.market, market));
   }
+  return null;
 };
 
 // Select stock quantity

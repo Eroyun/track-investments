@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import DataTable from "./dataTable";
-import { createTables } from "../helpers/hooks";
 
 const PageComponent = ({ dataType, apiPath }) => {
   const [data, setData] = useState([]);
@@ -15,14 +14,11 @@ const PageComponent = ({ dataType, apiPath }) => {
     try {
       const response = await fetch(apiPath);
       if (!response.ok) {
-        const res = await createTables();
-        if (!res.ok) {
-          if (callCount > 3) {
-            throw new Error(res.error || "Failed to create tables.");
-          }
-          setCallCount(callCount + 1);
-          return getData();
+        if (callCount > 3) {
+          throw new Error(res.error || "Failed to fetch data.");
         }
+        setCallCount(callCount + 1);
+        return getData();
       }
       const data = await response.json();
       setData(data.rows);

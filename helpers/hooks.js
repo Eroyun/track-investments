@@ -128,35 +128,7 @@ const getTransaction = async (transactionID) => {
   }
 };
 
-const createTables = async () => {
-  try {
-    const resHoldings = await fetchAPI("/api/holdings/create-table", {}, "GET");
-    const resTransactions = await fetchAPI(
-      "/api/transactions/create-table",
-      {},
-      "GET"
-    );
-
-    if (!resHoldings.ok || !resTransactions.ok) {
-      throw new Error("Failed to create tables. Please refresh the page.");
-    }
-
-    const response = NextResponse.json(resHoldings, resTransactions);
-    const data = await response.json();
-
-    if (data.error) {
-      throw new Error(data.error);
-    }
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    return { error: error.message };
-  }
-};
-
 module.exports = {
   addTransaction,
   deleteTransactions,
-  createTables,
 };

@@ -2,7 +2,10 @@ import PageComponent from "../../components/pageComponent";
 
 const Transactions = async () => {
   return (
-    <PageComponent dataType="holdings" apiPath="/api/holdings/get-holdings" />
+    <PageComponent
+      dataType="transactions"
+      apiPath="/api/transactions/get-transactions"
+    />
   );
 };
 
