@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 
-import { createOptions } from "../app/helpers/dataHelper";
+import { createOptions } from "../helpers/dataHelper";
 
 const Filter = ({ filter, setFilter, rows, dataType }) => {
   const { stockOptions, marketOptions } = createOptions(rows);

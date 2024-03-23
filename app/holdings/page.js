@@ -1,4 +1,4 @@
-import PageComponent from "../components/pageComponent";
+import PageComponent from "@/components/pageComponent";
 
 const Holdings = () => {
   return (

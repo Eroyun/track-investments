@@ -9,7 +9,7 @@ import EmptyData from "./emptyData";
 import Filter from "./filter";
 import NavigationButton from "./navigationButton";
 
-import { createColumns } from "../app/helpers/dataHelper";
+import { createColumns } from "../helpers/dataHelper";
 
 const DataTable = ({ fields, rows, getData, dataType }) => {
   const [isLoading, setIsLoading] = useState(true);

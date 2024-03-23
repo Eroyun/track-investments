@@ -13,13 +13,13 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";
 
-import { addTransaction } from "../app/helpers/hooks";
+import addTransaction from "../helpers/hooks";
 import {
   currencies,
   markets,
   formatNumberAsCurrency,
   revertCurrencyFormat,
-} from "../app/helpers/localizationHelper";
+} from "../helpers/localizationHelper";
 
 const AddTransactionModal = ({ style, className, getData }) => {
   const [transactionType, setTransactionType] = useState("BUY");

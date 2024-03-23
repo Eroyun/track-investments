@@ -1,5 +1,5 @@
 import { formatNumberAsCurrency } from "./localizationHelper";
-import DeleteStockButton from "../../components/deleteStockButton";
+import DeleteStockButton from "@/components/deleteStockButton";
 
 const formatTableCell = (index, field, stock, dataType) => {
   if (dataType === "holdings") {
