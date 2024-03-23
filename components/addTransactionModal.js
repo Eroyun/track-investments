@@ -13,13 +13,13 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";
 
-import { addTransaction } from "../helpers/hooks";
+import { addTransaction } from "../app/helpers/hooks";
 import {
   currencies,
   markets,
   formatNumberAsCurrency,
   revertCurrencyFormat,
-} from "../helpers/localizationHelper";
+} from "../app/helpers/localizationHelper";
 
 const AddTransactionModal = ({ style, className, getData }) => {
   const [transactionType, setTransactionType] = useState("BUY");
@@ -200,7 +200,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
           <IconButton
             aria-label="close"
             onClick={handleClose}
-            style={{ position: "absolute", right: "10px", top: "10px" }}
+            className="absolute top-2 right-2"
           >
             <CloseIcon />
           </IconButton>

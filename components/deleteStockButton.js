@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { deleteTransactions } from "../helpers/hooks";
+import { deleteTransactions } from "../app/helpers/hooks";
 
 const DeleteStockButton = ({
   transactionIDs,

@@ -1,9 +1,5 @@
-import PageComponent from "./components/pageComponent";
-
-const Holdings = () => {
-  return (
-    <PageComponent dataType="holdings" apiPath="/api/holdings/get-holdings" />
-  );
+const Page = () => {
+  return <div>Page</div>;
 };
 
-export default Holdings;
+export default Page;
