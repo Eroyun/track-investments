@@ -10,6 +10,7 @@ import Filter from "./filter";
 import NavigationButton from "./navigationButton";
 
 import { createColumns } from "../helpers/dataHelper";
+import { useTheme } from '@mui/material/styles';
 
 const DataTable = ({ fields, rows, getData, dataType, userID }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +20,7 @@ const DataTable = ({ fields, rows, getData, dataType, userID }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [columns, setColumns] = useState([]);
+  const theme = useTheme();
   useEffect(() => {
     setIsLoading(true);
     const timer = setTimeout(() => {
@@ -85,24 +87,41 @@ const DataTable = ({ fields, rows, getData, dataType, userID }) => {
         />
       </div>
       <DataGrid
-        style={{ height: "80%" }}
         rows={filteredData}
         columns={columns}
-        paginationModel={{
-          pageSize: rowsPerPage,
-          page: page,
-        }}
-        onPaginationModelChange={(newModel) => {
-          setRowsPerPage(newModel.pageSize);
-          setPage(newModel.page);
-        }}
+        pageSize={rowsPerPage}
+        onPageSizeChange={(newPageSize) => setRowsPerPage(newPageSize)}
+        page={page}
+        onPageChange={(newPage) => setPage(newPage)}
         checkboxSelection={dataType === "transactions"}
-        onRowSelectionModelChange={handleRowSelection}
+        onSelectionModelChange={handleRowSelection}
         getRowId={(row) => {
           if (dataType === "holdings") {
             return `${row.stock}-${row.currency}-${row.market}`;
           } else {
             return row.transaction_id;
+          }
+        }}
+        sx={{
+          height: '80%',
+          '& .MuiDataGrid-columnHeaders': {
+            color: theme.palette.common.white,
+          },
+          '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+            backgroundColor: theme.palette.secondary.main,
+            border: `1px solid ${theme.palette.secondary.main}`,
+          },
+          '& .MuiDataGrid-row': {
+            border: `1px solid ${theme.palette.secondary.main}`,
+          },
+          '& .MuiDataGrid-cell': {
+            color: theme.palette.common.white,
+          },
+          '& .MuiDataGrid-footerContainer': {
+            border: `1px solid ${theme.palette.secondary.main}`,
+          },
+          '& .MuiDataGrid-cell .MuiDataGrid-cellEmpty': {
+            display: 'none'
           }
         }}
       />

@@ -11,6 +11,7 @@ import {
   getUser,
 } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
+import NavBar from "./navBar";
 
 const PageComponent = ({ dataType }) => {
   const [data, setData] = useState([]);
@@ -72,14 +73,26 @@ const PageComponent = ({ dataType }) => {
 
   const darkTheme = createTheme({
     palette: {
-      mode: "dark",
+      primary: {
+        main: "#1A1A1D",
+      },
+      secondary: {
+        main: "#282828",
+      },
+      white: {
+        main: "#FFFFFF",
+      },
     },
   });
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
+      <div
+        className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full"
+        style={{ backgroundColor: darkTheme.palette.primary.main }}
+      >
+        <NavBar />
         <DataTable
           fields={fields}
           rows={data}
