@@ -14,7 +14,8 @@ export async function GET() {
         currency VARCHAR(3),
         stock_price DECIMAL(10, 2),
         total_cost DECIMAL(10, 2),
-        market VARCHAR(12)
+        market VARCHAR(12),
+        user_id INTEGER REFERENCES users(id)
     );`;
     return NextResponse.json({ result }, { status: 200 });
   } catch (error) {

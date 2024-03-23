@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   const {
     transaction_id,
+    user_id,
     transaction_type,
     transaction_date,
     stock,
@@ -16,8 +17,8 @@ export async function POST(req) {
 
   try {
     const res = await sql`
-      INSERT INTO transactions (transaction_id, transaction_type, transaction_date, stock, stock_quantity, currency, stock_price, total_cost, market)
-      VALUES (${transaction_id}, ${transaction_type}, ${transaction_date}, ${stock}, ${stock_quantity}, ${currency}, ${stock_price}, ${total_cost}, ${market});
+      INSERT INTO transactions (transaction_id, user_id, transaction_type, transaction_date, stock, stock_quantity, currency, stock_price, total_cost, market)
+      VALUES (${transaction_id}, ${user_id}, ${transaction_type}, ${transaction_date}, ${stock}, ${stock_quantity}, ${currency}, ${stock_price}, ${total_cost}, ${market});
     `;
 
     if (!res) {

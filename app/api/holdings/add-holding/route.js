@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const {
+      user_id,
       stock,
       stock_quantity,
       currency,
@@ -14,17 +15,9 @@ export async function POST(req) {
     } = await req.json();
     let res;
 
-    try {
-      await sql`
-        ALTER TABLE holdings ADD CONSTRAINT holdings_unique UNIQUE (stock, currency, market);
-      `;
-    } catch (error) {
-      console.log("Unique constraint already exists or other DB error");
-    }
-
     // Check if there is an existing row with the same stock but different currency
     const existingHolding = await sql`
-      SELECT * FROM holdings WHERE stock = ${stock} AND currency != ${currency} AND market = ${market};
+      SELECT * FROM holdings WHERE user_id = ${user_id} stock = ${stock} AND currency != ${currency} AND market = ${market};
     `;
     if (existingHolding.rowCount > 0) {
       return NextResponse.json(
@@ -39,6 +32,7 @@ export async function POST(req) {
     if (transaction_type.toLowerCase() === "buy") {
       res = await sql`
               INSERT INTO holdings (
+                user_id,
                 stock,
                 stock_quantity,
                 currency,
@@ -48,6 +42,7 @@ export async function POST(req) {
                 profit_loss,
                 sold
               ) VALUES (
+                ${user_id},
                 ${stock},
                 ${stock_quantity},
                 ${currency},

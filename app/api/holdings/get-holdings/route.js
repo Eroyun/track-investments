@@ -3,13 +3,20 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic"; // Resolves the issue with Vercel's caching
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const results = await sql`
-    SELECT * FROM holdings 
-        ORDER BY stock ASC;
+    const userID = req.nextUrl.searchParams.get("userID");
+    const res = await sql`
+      SELECT * FROM holdings 
+      WHERE user_id = ${userID}
+      ORDER BY stock ASC;
     `;
-    return NextResponse.json(results);
+
+    if (!res) {
+      return NextResponse.json({ error: "No holdings found" }, { status: 404 });
+    }
+
+    return NextResponse.json(res);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -13,7 +13,9 @@ export async function GET() {
         total_cost DECIMAL(10, 2),
         market VARCHAR(12),
         profit_loss DECIMAL(10, 2),
-        sold BOOLEAN
+        sold BOOLEAN,
+        user_id INTEGER REFERENCES users(id),
+        PRIMARY KEY (user_id, stock, currency, market)
     );`;
     return NextResponse.json({ result }, { status: 200 });
   } catch (error) {

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -8,8 +10,25 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { getSession } from "@/helpers/hooks/authHooks";
+import { useRouter } from "next/navigation";
+import { signIn } from "@/helpers/hooks/authHooks";
+import { addUser } from "@/helpers/hooks/userHooks";
 
-const AuthDialog = ({ register, login }) => {
+const AuthDialog = () => {
+  const router = useRouter();
+
+  const checkSession = async () => {
+    const session = await getSession();
+    if (session && session.user) {
+      router.push("/holdings");
+    }
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
   const [isLogin, setIsLogin] = useState(true);
   const [open, setOpen] = useState(false);
 
@@ -50,7 +69,7 @@ const AuthDialog = ({ register, login }) => {
         <DialogContent>
           <form
             id={isLogin ? "login" : "register"}
-            onSubmit={isLogin ? login : register}
+            onSubmit={isLogin ? signIn : addUser}
             className="flex flex-col space-y-4 px-4 py-8 sm:px-16 bg-gray-800 text-white"
           >
             <div>
