@@ -1,9 +1,9 @@
 import PageComponent from "../../components/pageComponent";
 
-const Transactions = async () => {
+const Holdings = async () => {
   return (
     <PageComponent dataType="holdings" apiPath="/api/holdings/get-holdings" />
   );
 };
 
-export default Transactions;
+export default Holdings;

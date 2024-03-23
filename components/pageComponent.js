@@ -3,11 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import DataTable from "../components/dataTable";
+import DataTable from "./dataTable";
 import { createTables } from "../helpers/hooks";
-import AuthDialog from "./authDialog";
 
-const PageComponent = ({ dataType, apiPath, session }) => {
+const PageComponent = ({ dataType, apiPath }) => {
   const [data, setData] = useState([]);
   const [fields, setFields] = useState([]);
   const [callCount, setCallCount] = useState(0);
@@ -49,16 +48,12 @@ const PageComponent = ({ dataType, apiPath, session }) => {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <div className="relative flex flex-col mx-auto px-10 py-10 justify-between h-full">
-        {session ? (
-          <DataTable
-            fields={fields}
-            rows={data}
-            getData={getData}
-            dataType={dataType}
-          />
-        ) : (
-          <AuthDialog />
-        )}
+        <DataTable
+          fields={fields}
+          rows={data}
+          getData={getData}
+          dataType={dataType}
+        />
       </div>
     </ThemeProvider>
   );

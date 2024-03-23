@@ -1,7 +1,7 @@
 "use server";
 
-import { createUser, getUser } from "../api/auth/db";
-import { signIn } from "../api/auth/auth";
+import { createUser, getUser } from "@/db/users";
+import { signIn } from "../auth";
 
 export const register = async (formData) => {
   let email = formData.get("email");
@@ -12,18 +12,16 @@ export const register = async (formData) => {
   } else {
     await createUser(email, password);
     await signIn("credentials", {
-      redirectTo: "/",
+      redirectTo: "/holdings",
       email: email,
       password: password,
     });
-    console.log("test");
   }
 };
 
 export const login = async (formData) => {
-  console.log("test");
   await signIn("credentials", {
-    redirectTo: "/",
+    redirectTo: "/holdings",
     email: formData.get("email"),
     password: formData.get("password"),
   });

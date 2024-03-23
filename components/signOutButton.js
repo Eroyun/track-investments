@@ -1,4 +1,4 @@
-import { signOut } from "../api/auth/auth";
+import { signOut } from "../auth";
 
 const SignOutButton = () => {
   return (

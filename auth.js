@@ -1,16 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt-ts";
-import { getUser } from "./db";
-import { authConfig } from "./auth.config";
+import { getUser } from "./db/users";
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
-  ...authConfig,
+const config = {
   providers: [
     Credentials({
       async authorize({ email, password }) {
@@ -21,4 +14,13 @@ export const {
       },
     }),
   ],
-});
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      let isLoggedIn = !!auth?.user;
+      if (isLoggedIn) return Response.redirect(new URL(nextUrl));
+      return false;
+    },
+  },
+};
+
+export const { handlers, auth, signIn, signOut } = NextAuth(config);
