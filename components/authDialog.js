@@ -128,32 +128,6 @@ const AuthDialog = () => {
               <AuthForm isLogin={isLogin} toggleIsLogin={toggleIsLogin} />
             </div>
           </div>
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>
-              {isLogin ? "Sign In" : "Sign Up"}
-              <IconButton
-                className="absolute top-2 right-2"
-                color="inherit"
-                onClick={handleClose}
-                aria-label="close"
-              >
-                <CloseIcon />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent>
-              <AuthForm isLogin={isLogin} toggleIsLogin={toggleIsLogin} />
-            </DialogContent>
-            <DialogActions>
-              <Button
-                type="submit"
-                form={isLogin ? "login" : "register"}
-                variant="contained"
-                color="primary"
-              >
-                {isLogin ? "Sign In" : "Sign Up"}
-              </Button>
-            </DialogActions>
-          </Dialog>
         </div>
       </ThemeProvider>
     </>

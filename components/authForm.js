@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { login, register } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
@@ -156,6 +157,18 @@ const AuthForm = ({ isLogin, toggleIsLogin }) => {
         </button>
         {isLogin ? " for free." : " instead."}
       </p>
+      <Button
+        type="submit"
+        variant="contained"
+        style={{
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.white.main,
+          textTransform: "uppercase",
+          fontWeight: "bold",
+        }}
+      >
+        {isLogin ? "Log In" : "Register"}
+      </Button>
     </form>
   );
 };

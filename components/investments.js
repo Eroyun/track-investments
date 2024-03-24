@@ -9,11 +9,12 @@ import {
   getInvestments,
   getSession,
   getUser,
+  logout,
 } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
 import NavBar from "./navBar";
 
-const PageComponent = ({ dataType }) => {
+const Investments = ({ dataType }) => {
   const [data, setData] = useState([]);
   const [fields, setFields] = useState([]);
   const [callCount, setCallCount] = useState(0);
@@ -105,4 +106,4 @@ const PageComponent = ({ dataType }) => {
   );
 };
 
-export default PageComponent;
+export default Investments;

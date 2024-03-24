@@ -1,10 +1,10 @@
 "use client";
 
-import PageComponent from "@/components/pageComponent";
+import Investments from "@/components/investments";
 
 const Transactions = () => {
   return (
-    <PageComponent
+    <Investments
       dataType="transactions"
       apiPath="/api/transactions/get-transactions"
     />

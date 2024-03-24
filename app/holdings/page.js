@@ -1,9 +1,9 @@
 "use client";
-import PageComponent from "@/components/pageComponent";
+import Investments from "@/components/investments";
 
 const Holdings = () => {
   return (
-    <PageComponent dataType="holdings" apiPath="/api/holdings/get-holdings" />
+    <Investments dataType="holdings" apiPath="/api/holdings/get-holdings" />
   );
 };
 
