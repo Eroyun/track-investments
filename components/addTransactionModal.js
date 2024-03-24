@@ -20,7 +20,8 @@ import {
   revertCurrencyFormat,
 } from "../helpers/localizationHelper";
 
-const AddTransactionModal = ({ style, className, getData }) => {
+const AddTransactionModal = ({ style, className, getData, userID }) => {
+  console.log(userID);
   const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState(currencies[0]);
   const [market, setMarket] = useState(markets[0]);
@@ -51,6 +52,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
     try {
       const response = await addTransaction(
         transactionDate,
+        userID,
         stock,
         stockQuantity,
         currency,

@@ -17,7 +17,7 @@ export async function POST(req) {
 
     // Check if there is an existing row with the same stock but different currency
     const existingHolding = await sql`
-      SELECT * FROM holdings WHERE user_id = ${user_id} stock = ${stock} AND currency != ${currency} AND market = ${market};
+      SELECT * FROM holdings WHERE user_id = ${user_id} AND stock = ${stock} AND currency != ${currency} AND market = ${market};
     `;
     if (existingHolding.rowCount > 0) {
       return NextResponse.json(
@@ -52,7 +52,7 @@ export async function POST(req) {
                 ${0},
                 false
               )
-              ON CONFLICT (stock, currency, market) DO UPDATE SET
+              ON CONFLICT (user_id, stock, currency, market) DO UPDATE SET
                 stock_quantity = holdings.stock_quantity + EXCLUDED.stock_quantity,
                 total_cost = holdings.total_cost + EXCLUDED.total_cost,
                 stock_price = (holdings.total_cost + EXCLUDED.total_cost) / (holdings.stock_quantity + EXCLUDED.stock_quantity),
@@ -61,7 +61,7 @@ export async function POST(req) {
             `;
     } else if (transaction_type.toLowerCase() === "sell") {
       let currentQuantity = await sql`
-          SELECT stock_quantity FROM holdings WHERE stock = ${stock} AND currency = ${currency} AND market = ${market};
+          SELECT stock_quantity FROM holdings WHERE user_id = ${user_id} AND stock = ${stock} AND currency = ${currency} AND market = ${market};
       `;
 
       if (currentQuantity.rowCount === 0) {
@@ -77,7 +77,7 @@ export async function POST(req) {
                 total_cost = (holdings.stock_quantity::decimal - ${stock_quantity}) * ${stock_price},
                 profit_loss = holdings.profit_loss + (${stock_quantity} * (${stock_price} - holdings.stock_price)),
                 sold = (holdings.stock_quantity - ${stock_quantity}) <= 0
-              WHERE stock = ${stock} AND currency = ${currency} AND market = ${market};
+              WHERE user_id = ${user_id} AND stock = ${stock} AND currency = ${currency} AND market = ${market};
             `;
     }
     if (!res) {

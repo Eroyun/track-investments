@@ -3,6 +3,7 @@ import { fetchAPI } from "../helpers/hooksHelper";
 
 export const addTransaction = async (
   transactionDate,
+  userID,
   stock,
   stockQuantity,
   currency,
@@ -14,6 +15,7 @@ export const addTransaction = async (
   const transactionID = uuidv4();
   const data = {
     transaction_id: transactionID,
+    user_id: userID,
     transaction_date: transactionDate,
     stock,
     stock_quantity: stockQuantity,
@@ -23,7 +25,6 @@ export const addTransaction = async (
     transaction_type: transactionType,
     market,
   };
-
   try {
     const res = await fetchAPI("/api/holdings/add-holding", data);
 
@@ -43,7 +44,7 @@ export const addTransaction = async (
       }
     }
 
-    return { ok: true, status: "ok", data: response };
+    return { ok: true, status: "ok", data: response.data };
   } catch (error) {
     console.error(error);
     return { status: "error", message: error.message };
@@ -69,19 +70,18 @@ export const deleteTransactions = async (transactionIDs) => {
 
     if (!response.ok) {
       const transaction = await getTransaction(data);
-      const data = await transaction.json();
+      const data = transaction.data;
       const addResponse = await fetchAPI(
         "/api/holdings/add-holding",
         data.rows[0]
       );
 
       if (!addResponse.ok) {
-        const addErrorData = await addResponse.json();
-        throw new Error(addErrorData.error || "Failed to add holding.");
+        throw new Error(addResponse.message || "Failed to add holding.");
       }
     }
 
-    return { ok: true, status: "ok", data: response };
+    return { ok: true, status: "ok", data: response.data };
   } catch (error) {
     console.error(error);
     return { status: "error", message: error.message };
@@ -99,9 +99,7 @@ export const getTransaction = async (transactionID) => {
     if (!res.ok) {
       throw new Error(res.message || "Failed to get transaction.");
     }
-
-    const data = await res.json();
-    return { ok: true, status: "ok", data: data };
+    return { ok: true, status: "ok", data: res.data };
   } catch (error) {
     console.error(error);
     return { status: "error", message: error.message };

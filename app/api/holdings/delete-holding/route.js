@@ -22,7 +22,7 @@ export async function POST(req) {
         // Fetch the current holdings for the stock
         const holdingResponse = await sql`
           SELECT * FROM holdings
-          WHERE stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+          WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
         `;
 
         const holding = holdingResponse.rows[0];
@@ -41,7 +41,7 @@ export async function POST(req) {
           // If the new quantity is zero, delete the row
           res = await sql`
             DELETE FROM holdings
-            WHERE stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+            WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
           `;
         } else {
           // Otherwise, update the row
@@ -52,7 +52,7 @@ export async function POST(req) {
               stock_price = ${newPrice},
               profit_loss = holdings.profit_loss,
               sold = false
-            WHERE stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+            WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
           `;
         }
       } else if (transaction.transaction_type.toLowerCase() === "sell") {
@@ -64,7 +64,7 @@ export async function POST(req) {
             stock_price = (holdings.total_cost + ${transaction.total_cost}) / (holdings.stock_quantity + ${transaction.stock_quantity}),
             profit_loss = holdings.profit_loss - ${transaction.stock_quantity} * (${transaction.stock_price} - holdings.stock_price),
             sold = false
-          WHERE stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+          WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
         `;
       }
 

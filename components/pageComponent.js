@@ -4,7 +4,12 @@ import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import DataTable from "./dataTable";
-import { createTables, getInvestments, getUser } from "@/hooks/hooks";
+import {
+  createTables,
+  getInvestments,
+  getSession,
+  getUser,
+} from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
 
 const PageComponent = ({ dataType }) => {
@@ -14,13 +19,30 @@ const PageComponent = ({ dataType }) => {
   const [userID, setUserID] = useState("");
   const router = useRouter();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    checkSession();
+  }, []);
 
   useEffect(() => {
     if (data.length === 0 && userID !== "") {
       getData();
     }
   }, [userID]);
+
+  const checkSession = async () => {
+    const res = await getSession();
+
+    if (!res.ok || !res?.data?.user?.email) {
+      router.push("/");
+    }
+    const userRes = await getUser(res.data.user.email);
+    const userID = userRes.data?.rows[0]?.id;
+    if (!userRes.ok || !userID) {
+      router.push("/");
+    }
+
+    setUserID(userID);
+  };
 
   const getData = async () => {
     try {
@@ -40,7 +62,7 @@ const PageComponent = ({ dataType }) => {
           return getData();
         }
       }
-      const data = await response.json();
+      const data = response.data;
       setData(data.rows);
       setFields(data.fields);
     } catch (error) {
@@ -63,6 +85,7 @@ const PageComponent = ({ dataType }) => {
           rows={data}
           getData={getData}
           dataType={dataType}
+          userID={userID}
         />
       </div>
     </ThemeProvider>

@@ -11,7 +11,7 @@ import NavigationButton from "./navigationButton";
 
 import { createColumns } from "../helpers/dataHelper";
 
-const DataTable = ({ fields, rows, getData, dataType }) => {
+const DataTable = ({ fields, rows, getData, dataType, userID }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -69,8 +69,8 @@ const DataTable = ({ fields, rows, getData, dataType }) => {
     );
   }
 
-  if (!rows || rows.length === 0) {
-    return <EmptyData getData={getData} />;
+  if (!rows || (rows.length === 0 && userID)) {
+    return <EmptyData getData={getData} userID={userID} />;
   }
 
   return (
@@ -106,7 +106,11 @@ const DataTable = ({ fields, rows, getData, dataType }) => {
           }
         }}
       />
-      <TransactionActions selectedRows={selectedRows} getData={getData} />
+      <TransactionActions
+        selectedRows={selectedRows}
+        getData={getData}
+        userID={userID}
+      />
     </div>
   );
 };
