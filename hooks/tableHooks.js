@@ -1,5 +1,4 @@
-import { fetchAPI } from "../hooksHelper";
-import { NextResponse } from "next/server";
+import { fetchAPI } from "../helpers/hooksHelper";
 
 export const createTables = async () => {
   try {
@@ -14,17 +13,17 @@ export const createTables = async () => {
       throw new Error("Failed to create tables. Please refresh the page.");
     }
 
-    const response = NextResponse.json(resHoldings, resTransactions);
-    const data = await response.json();
-
-    if (data.error) {
-      throw new Error(data.error);
-    }
-
-    return data;
+    return {
+      ok: true,
+      status: "ok",
+      data: {
+        holdings: dataHoldings.data,
+        transactions: dataTransactions.data,
+      },
+    };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
   }
 };
 
@@ -36,15 +35,9 @@ export const createUserTable = async () => {
       throw new Error("Failed to create table. Please refresh the page.");
     }
 
-    const response = await res.json();
-
-    if (response.error) {
-      throw new Error(response.error);
-    }
-
-    return response;
+    return { ok: true, status: "ok", data: res.data };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
   }
 };

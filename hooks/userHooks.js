@@ -1,4 +1,4 @@
-import { fetchAPI } from "../hooksHelper";
+import { fetchAPI } from "../helpers/hooksHelper";
 
 export const getUser = async (email) => {
   try {
@@ -6,11 +6,10 @@ export const getUser = async (email) => {
     if (!res.ok) {
       throw new Error("Failed to get user.");
     }
-    const data = await res.json();
-    return data;
+    return { ok: true, status: "ok", data: res.data };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
   }
 };
 
@@ -20,9 +19,9 @@ export const addUser = async (email, password) => {
     if (!res.ok) {
       throw new Error("Failed to add user.");
     }
-    return res;
+    return { ok: true, status: "ok" };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
   }
 };

@@ -9,19 +9,31 @@ const config = {
       async authorize({ email, password }) {
         const res = await sql`SELECT * FROM users WHERE email = ${email};`;
         const user = res.rows;
-        if (user.length === 0) return null;
-        const passwordsMatch = await compare(password, user[0].password);
-        if (passwordsMatch) return user[0];
+        if (user[0]) {
+          const passwordsMatch = await compare(password, user[0].password);
+          if (passwordsMatch) return user[0];
+        }
+        throw new Error(
+          "The email or password you entered is incorrect. Please try again."
+        );
       },
     }),
   ],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      if (isLoggedIn) return Response.redirect(new URL(nextUrl));
-      return false;
+    async jwt({ token }) {
+      if (token) {
+        const res =
+          await sql`SELECT * FROM users WHERE email = ${token.email};`;
+        const user = res.rows;
+        if (user[0]) {
+          return token;
+        }
+      }
+      throw new Error(
+        "There was an error retrieving your user information. Please try again."
+      );
     },
   },
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(config);
+export const { handlers } = NextAuth(config);

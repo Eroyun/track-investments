@@ -1,8 +1,4 @@
-import { addUser } from "./hooks/userHooks";
-import { signIn } from "./hooks/authHooks";
-import { useRouter } from "next/navigation";
-
-export const fetchAPI = async (url, data, method = "POST") => {
+export const fetchAPI = async (url, body, method = "POST") => {
   try {
     const responseData = {
       method: method,
@@ -10,33 +6,24 @@ export const fetchAPI = async (url, data, method = "POST") => {
     };
 
     if (method === "POST") {
-      responseData.body = JSON.stringify(data);
+      responseData.body = JSON.stringify(body);
     }
 
     const response = await fetch(url, responseData);
+
     if (!response.ok) {
       const errorData = await response.json();
-      return errorData.error;
+      throw new Error(errorData.error || "Failed to fetch API.");
     }
 
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
-};
-
-export const login = async (email, password) => {
-  try {
-    const res = await signIn(email, password);
-
-    if (res.length === 0) {
-      throw new Error("User not found");
+    if (response.redirected === true) {
+      return { ok: true, status: "ok" };
     }
 
-    return await res.json();
+    const data = await response.json();
+    return { ok: true, status: "ok", data: data };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
   }
 };

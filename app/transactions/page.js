@@ -1,6 +1,8 @@
+"use client";
+
 import PageComponent from "@/components/pageComponent";
 
-const Transactions = async () => {
+const Transactions = () => {
   return (
     <PageComponent
       dataType="transactions"

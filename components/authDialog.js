@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -10,27 +10,13 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { getSession } from "@/helpers/hooks/authHooks";
+import { login, register } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/helpers/hooks/authHooks";
-import { addUser } from "@/helpers/hooks/userHooks";
 
 const AuthDialog = () => {
-  const router = useRouter();
-
-  const checkSession = async () => {
-    const session = await getSession();
-    if (session && session.user) {
-      router.push("/holdings");
-    }
-  };
-
-  useEffect(() => {
-    checkSession();
-  }, []);
-
   const [isLogin, setIsLogin] = useState(true);
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const toggleIsLogin = () => {
     setIsLogin(!isLogin);
@@ -42,6 +28,32 @@ const AuthDialog = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const res = await login(email, password);
+    if (res.ok) {
+      router.push("/holdings");
+    } else {
+      alert(res.message);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const res = await register(email, password);
+    if (res.ok) {
+      router.push("/holdings");
+    } else {
+      alert(res.message);
+    }
   };
 
   return (
@@ -69,7 +81,8 @@ const AuthDialog = () => {
         <DialogContent>
           <form
             id={isLogin ? "login" : "register"}
-            onSubmit={isLogin ? signIn : addUser}
+            onSubmit={isLogin ? handleLogin : handleRegister}
+            method="POST"
             className="flex flex-col space-y-4 px-4 py-8 sm:px-16 bg-gray-800 text-white"
           >
             <div>

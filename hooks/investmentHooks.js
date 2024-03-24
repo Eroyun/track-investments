@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { NextResponse } from "next/server";
-import { fetchAPI } from "../hooksHelper";
+import { fetchAPI } from "../helpers/hooksHelper";
 
 export const addTransaction = async (
   transactionDate,
@@ -29,7 +28,7 @@ export const addTransaction = async (
     const res = await fetchAPI("/api/holdings/add-holding", data);
 
     if (!res.ok) {
-      throw new Error(res || "Failed to add holding.");
+      throw new Error(res.message || "Failed to add holding.");
     }
 
     const response = await fetchAPI("/api/transactions/add-transaction", data);
@@ -40,14 +39,14 @@ export const addTransaction = async (
       });
 
       if (!deleteResponse.ok) {
-        throw new Error(deleteResponse || "Failed to delete holding.");
+        throw new Error(deleteResponse.message || "Failed to delete holding.");
       }
     }
 
-    return response;
+    return { ok: true, status: "ok", data: response };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
   }
 };
 
@@ -82,10 +81,10 @@ export const deleteTransactions = async (transactionIDs) => {
       }
     }
 
-    return response;
+    return { ok: true, status: "ok", data: response };
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return { status: "error", message: error.message };
   }
 };
 
@@ -98,12 +97,41 @@ export const getTransaction = async (transactionID) => {
     );
 
     if (!res.ok) {
-      throw new Error(res || "Failed to get transaction.");
+      throw new Error(res.message || "Failed to get transaction.");
     }
 
-    return res;
+    const data = await res.json();
+    return { ok: true, status: "ok", data: data };
   } catch (error) {
     console.error(error);
-    return error;
+    return { status: "error", message: error.message };
+  }
+};
+
+export const getInvestments = async (dataType, userID) => {
+  try {
+    let res = {};
+    if (dataType === "holdings") {
+      res = await fetchAPI(
+        `/api/transactions/get-transactions?userID=${userID}`,
+        {},
+        "GET"
+      );
+    } else if (dataType === "transactions") {
+      res = await fetchAPI(
+        `/api/transactions/get-transactions?userID=${userID}`,
+        {},
+        "GET"
+      );
+    }
+
+    if (!res.ok) {
+      throw new Error(res.message || "Failed to get transactions.");
+    }
+
+    return { ok: true, status: "ok", data: res.data };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: error.message };
   }
 };

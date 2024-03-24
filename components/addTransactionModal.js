@@ -12,7 +12,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";
-import { addTransaction } from "@/helpers/hooks/investmentHooks";
+import { addTransaction } from "@/hooks/hooks";
 import {
   currencies,
   markets,
@@ -60,8 +60,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
         market
       );
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || response.statusText);
+        throw new Error(response.message);
       }
       resetForm();
       getData();

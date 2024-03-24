@@ -4,21 +4,17 @@ import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import DataTable from "./dataTable";
-import { createTables } from "@/helpers/hooks/tableHooks";
-import { getSession } from "@/helpers/hooks/authHooks";
+import { createTables, getInvestments, getUser } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
-import { getUser } from "@/helpers/hooks/userHooks";
 
-const PageComponent = ({ dataType, apiPath }) => {
+const PageComponent = ({ dataType }) => {
   const [data, setData] = useState([]);
   const [fields, setFields] = useState([]);
   const [callCount, setCallCount] = useState(0);
   const [userID, setUserID] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    checkSession();
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (data.length === 0 && userID !== "") {
@@ -26,29 +22,14 @@ const PageComponent = ({ dataType, apiPath }) => {
     }
   }, [userID]);
 
-  const checkSession = async () => {
-    const session = await getSession();
-
-    if (!session?.user?.email) {
-      router.push("/");
-    }
-
-    const res = await getUser(session.user.email);
-
-    if (res.rowCount < 1) {
-      router.push("/");
-    }
-
-    setUserID(res.rows[0].id);
-  };
-
   const getData = async () => {
     try {
       if (userID === "" || !userID) {
         router.push("/");
       }
-      console.log(apiPath + "?userID=" + userID);
-      const response = await fetch(apiPath + "?userID=" + userID);
+
+      const response = await getInvestments(dataType, userID);
+
       if (!response.ok) {
         const res = await createTables();
         if (!res.ok) {
