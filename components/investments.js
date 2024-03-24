@@ -9,7 +9,6 @@ import {
   getInvestments,
   getSession,
   getUser,
-  logout,
 } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
 import NavBar from "./navBar";

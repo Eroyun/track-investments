@@ -4,7 +4,7 @@ import { createUserTable } from "@/hooks/hooks";
 import { useEffect } from "react";
 import AuthDialog from "@/components/authDialog";
 import { useRouter } from "next/navigation";
-import { getSession } from "@/hooks/hooks";
+import { getSession, logout } from "@/hooks/hooks";
 
 const Page = () => {
   const router = useRouter();
@@ -13,6 +13,7 @@ const Page = () => {
   };
 
   const checkSession = async () => {
+    await logout();
     const res = await getSession();
     if (res.status === "error") {
       alert(res.message);
