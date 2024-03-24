@@ -5,8 +5,13 @@ import { useEffect } from "react";
 import AuthDialog from "@/components/authDialog";
 import { useRouter } from "next/navigation";
 import { getSession, logout } from "@/hooks/hooks";
+import { useFinnhub } from "@/helpers/finnhubHelper";
+import { ApiClient, DefaultApi } from "finnhub";
 
 const Page = () => {
+  const finnhub = useFinnhub();
+  finnhub.getStockData("AAPL").then((res) => console.log(res));
+
   const router = useRouter();
   const createTable = async () => {
     return await createUserTable();
