@@ -1,14 +1,10 @@
+import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
-import {
-  getHoldingsByStockCurrencyMarket,
-  upsertHoldings,
-  getStockQuantity,
-  updateHoldings,
-} from "@/db/holdings";
 
 export async function POST(req) {
   try {
     const {
+      user_id,
       stock,
       stock_quantity,
       currency,
@@ -20,12 +16,9 @@ export async function POST(req) {
     let res;
 
     // Check if there is an existing row with the same stock but different currency
-    const existingHolding = await getHoldingsByStockCurrencyMarket(
-      stock,
-      currency,
-      market
-    );
-
+    const existingHolding = await sql`
+      SELECT * FROM holdings WHERE user_id = ${user_id} AND stock = ${stock} AND currency != ${currency} AND market = ${market};
+    `;
     if (existingHolding.rowCount > 0) {
       return NextResponse.json(
         {
@@ -37,16 +30,39 @@ export async function POST(req) {
     }
 
     if (transaction_type.toLowerCase() === "buy") {
-      res = await upsertHoldings(
-        stock,
-        stock_quantity,
-        currency,
-        stock_price,
-        total_cost,
-        market
-      );
+      res = await sql`
+              INSERT INTO holdings (
+                user_id,
+                stock,
+                stock_quantity,
+                currency,
+                stock_price,
+                total_cost,
+                market,
+                profit_loss,
+                sold
+              ) VALUES (
+                ${user_id},
+                ${stock},
+                ${stock_quantity},
+                ${currency},
+                ${stock_price},
+                ${total_cost},
+                ${market},
+                ${0},
+                false
+              )
+              ON CONFLICT (user_id, stock, currency, market) DO UPDATE SET
+                stock_quantity = holdings.stock_quantity + EXCLUDED.stock_quantity,
+                total_cost = holdings.total_cost + EXCLUDED.total_cost,
+                stock_price = (holdings.total_cost + EXCLUDED.total_cost) / (holdings.stock_quantity + EXCLUDED.stock_quantity),
+                profit_loss = holdings.profit_loss,
+                sold = false;
+            `;
     } else if (transaction_type.toLowerCase() === "sell") {
-      let currentQuantity = await getStockQuantity(stock, currency, market);
+      let currentQuantity = await sql`
+          SELECT stock_quantity FROM holdings WHERE user_id = ${user_id} AND stock = ${stock} AND currency = ${currency} AND market = ${market};
+      `;
 
       if (currentQuantity.rowCount === 0) {
         throw new Error("No holding found for the specified stock.");
@@ -55,13 +71,14 @@ export async function POST(req) {
           "You cannot sell more than what you have in your holdings."
         );
       }
-      res = await updateHoldings(
-        stock,
-        stock_quantity,
-        currency,
-        stock_price,
-        market
-      );
+      res = await sql`
+              UPDATE holdings SET
+                stock_quantity = holdings.stock_quantity - ${stock_quantity},
+                total_cost = (holdings.stock_quantity::decimal - ${stock_quantity}) * ${stock_price},
+                profit_loss = holdings.profit_loss + (${stock_quantity} * (${stock_price} - holdings.stock_price)),
+                sold = (holdings.stock_quantity - ${stock_quantity}) <= 0
+              WHERE user_id = ${user_id} AND stock = ${stock} AND currency = ${currency} AND market = ${market};
+            `;
     }
     if (!res) {
       throw new Error("Failed to add, update, or sell holding.");

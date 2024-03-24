@@ -1,10 +1,5 @@
+import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
-import { getTransactionById } from "@/db/transactions";
-import {
-  getHoldingsByStockCurrencyMarket,
-  deleteHoldingsBasedOnTransaction,
-  removeBuyTransaction,
-} from "@/db/holdings";
 
 export async function POST(req) {
   try {
@@ -12,7 +7,10 @@ export async function POST(req) {
 
     for (let transaction_id of transaction_ids) {
       // Fetch the transaction details using the transaction id
-      const transactionResponse = await getTransactionById(transaction_id);
+      const transactionResponse = await sql`
+        SELECT * FROM transactions
+        WHERE transaction_id = ${transaction_id};
+      `;
       const transaction = transactionResponse.rows[0];
 
       if (!transaction) {
@@ -22,11 +20,10 @@ export async function POST(req) {
       let res;
       if (transaction.transaction_type.toLowerCase() === "buy") {
         // Fetch the current holdings for the stock
-        const holdingResponse = await getHoldingsByStockCurrencyMarket(
-          transaction.stock,
-          transaction.currency,
-          transaction.market
-        );
+        const holdingResponse = await sql`
+          SELECT * FROM holdings
+          WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+        `;
 
         const holding = holdingResponse.rows[0];
 
@@ -42,19 +39,33 @@ export async function POST(req) {
 
         if (newQuantity === 0) {
           // If the new quantity is zero, delete the row
-          res = await deleteHoldingsBasedOnTransaction(transaction);
+          res = await sql`
+            DELETE FROM holdings
+            WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+          `;
         } else {
           // Otherwise, update the row
-          res = await removeBuyTransaction(
-            transaction,
-            newQuantity,
-            newCost,
-            newPrice
-          );
+          res = await sql`
+            UPDATE holdings SET
+              stock_quantity = ${newQuantity},
+              total_cost = ${newCost},
+              stock_price = ${newPrice},
+              profit_loss = holdings.profit_loss,
+              sold = false
+            WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+          `;
         }
       } else if (transaction.transaction_type.toLowerCase() === "sell") {
         // If the transaction was a sell, we need to buy back the sold stocks
-        res = await removeSellTransaction(transaction);
+        res = await sql`
+          UPDATE holdings SET
+            stock_quantity = holdings.stock_quantity + ${transaction.stock_quantity},
+            total_cost = holdings.total_cost + ${transaction.total_cost},
+            stock_price = (holdings.total_cost + ${transaction.total_cost}) / (holdings.stock_quantity + ${transaction.stock_quantity}),
+            profit_loss = holdings.profit_loss - ${transaction.stock_quantity} * (${transaction.stock_price} - holdings.stock_price),
+            sold = false
+          WHERE user_id = ${transaction.user_id} AND stock = ${transaction.stock} AND currency = ${transaction.currency} AND market = ${transaction.market};
+        `;
       }
 
       if (!res) {

@@ -12,8 +12,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import Select from "react-select";
-
-import { addTransaction } from "../helpers/hooks";
+import { addTransaction } from "@/hooks/hooks";
 import {
   currencies,
   markets,
@@ -21,7 +20,8 @@ import {
   revertCurrencyFormat,
 } from "../helpers/localizationHelper";
 
-const AddTransactionModal = ({ style, className, getData }) => {
+const AddTransactionModal = ({ style, className, getData, userID }) => {
+  console.log(userID);
   const [transactionType, setTransactionType] = useState("BUY");
   const [currency, setCurrency] = useState(currencies[0]);
   const [market, setMarket] = useState(markets[0]);
@@ -52,6 +52,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
     try {
       const response = await addTransaction(
         transactionDate,
+        userID,
         stock,
         stockQuantity,
         currency,
@@ -61,8 +62,7 @@ const AddTransactionModal = ({ style, className, getData }) => {
         market
       );
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || response.statusText);
+        throw new Error(response.message);
       }
       resetForm();
       getData();

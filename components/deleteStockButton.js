@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { deleteTransactions } from "../helpers/hooks";
+import { deleteTransactions } from "@/hooks/hooks";
 
 const DeleteStockButton = ({
   transactionIDs,
@@ -18,8 +18,7 @@ const DeleteStockButton = ({
       const response = await deleteTransactions(transactionIDs);
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || response.statusText);
+        throw new Error(response.message || "Failed to delete transactions.");
       }
 
       getData();

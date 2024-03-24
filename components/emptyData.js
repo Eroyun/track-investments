@@ -1,7 +1,7 @@
 import React from "react";
 import AddTransactionModal from "./addTransactionModal";
 
-const EmptyData = ({ getData }) => {
+const EmptyData = ({ getData, userID }) => {
   return (
     <div
       style={{ backgroundColor: "#1c1c1c" }}
@@ -9,7 +9,7 @@ const EmptyData = ({ getData }) => {
     >
       <h2 className="text-2xl text-gray-100">No data available.</h2>
       <p className="text-lg text-gray-300">Please add transactions.</p>
-      <AddTransactionModal getData={getData} />
+      <AddTransactionModal getData={getData} userID={userID} />
     </div>
   );
 };

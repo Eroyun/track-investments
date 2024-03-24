@@ -5,15 +5,19 @@ export const dynamic = "force-dynamic"; // Resolves the issue with Vercel's cach
 
 export async function GET(req) {
   try {
-    const userID = req.nextUrl.searchParams.get("userID");
-
-    const results = await sql`
+    const transactionID = req.nextUrl.searchParams.get("transactionID");
+    const res = await sql`
       SELECT * FROM transactions
-      WHERE user_id = ${userID}
-      ORDER BY transaction_date DESC, stock ASC
+      WHERE transaction_id = ${transactionID}
     `;
-    return NextResponse.json(results);
+
+    if (!res) {
+      throw new Error("Failed to get transactions.");
+    }
+
+    return NextResponse.json(res);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

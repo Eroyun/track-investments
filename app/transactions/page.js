@@ -1,6 +1,8 @@
-import PageComponent from "../../components/pageComponent";
+"use client";
 
-const Transactions = async () => {
+import PageComponent from "@/components/pageComponent";
+
+const Transactions = () => {
   return (
     <PageComponent
       dataType="transactions"

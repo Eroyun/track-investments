@@ -1,9 +1,10 @@
+import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
-import { insertTransaction } from "@/db/transactions";
 
 export async function POST(req) {
   const {
     transaction_id,
+    user_id,
     transaction_type,
     transaction_date,
     stock,
@@ -15,17 +16,10 @@ export async function POST(req) {
   } = await req.json();
 
   try {
-    const res = await insertTransaction(
-      transaction_id,
-      transaction_type,
-      transaction_date,
-      stock,
-      currency,
-      stock_quantity,
-      stock_price,
-      total_cost,
-      market
-    );
+    const res = await sql`
+      INSERT INTO transactions (transaction_id, user_id, transaction_type, transaction_date, stock, stock_quantity, currency, stock_price, total_cost, market)
+      VALUES (${transaction_id}, ${user_id}, ${transaction_type}, ${transaction_date}, ${stock}, ${stock_quantity}, ${currency}, ${stock_price}, ${total_cost}, ${market});
+    `;
 
     if (!res) {
       throw new Error("Failed to add transaction.");

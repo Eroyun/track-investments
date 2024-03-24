@@ -2,7 +2,7 @@ import React from "react";
 import DeleteStockButton from "./deleteStockButton";
 import AddTransactionModal from "./addTransactionModal";
 
-const TransactionActions = ({ selectedRows, getData }) => {
+const TransactionActions = ({ selectedRows, getData, userID }) => {
   return (
     <div className="flex justify-between items-center my-4">
       {selectedRows.length > 0 ? (
@@ -23,7 +23,7 @@ const TransactionActions = ({ selectedRows, getData }) => {
       ) : (
         <div style={{ width: "9rem" }} /> // Empty div to take up space
       )}
-      <AddTransactionModal getData={getData} />
+      <AddTransactionModal getData={getData} userID={userID} />
     </div>
   );
 };
