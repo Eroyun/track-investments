@@ -108,20 +108,11 @@ export const getTransaction = async (transactionID) => {
 
 export const getInvestments = async (dataType, userID) => {
   try {
-    let res = {};
-    if (dataType === "holdings") {
-      res = await fetchAPI(
-        `/api/transactions/get-transactions?userID=${userID}`,
-        {},
-        "GET"
-      );
-    } else if (dataType === "transactions") {
-      res = await fetchAPI(
-        `/api/transactions/get-transactions?userID=${userID}`,
-        {},
-        "GET"
-      );
-    }
+    const res = await fetchAPI(
+      `/api/${dataType}/get-${dataType}?userID=${userID}`,
+      {},
+      "GET"
+    );
 
     if (!res.ok) {
       throw new Error(res.message || "Failed to get transactions.");

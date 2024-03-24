@@ -56,7 +56,7 @@ const createColumns = (fields, rows, dataType, getData) => {
 
   if (dataType === "holdings") {
     columns = fields
-      .filter((field, index) => index !== 7)
+      .filter((field, index) => index !== 7 && index !== 8)
       .map((field, index) => ({
         field: field.name,
         headerName: field.name
@@ -72,7 +72,7 @@ const createColumns = (fields, rows, dataType, getData) => {
       }));
   } else {
     columns = fields
-      .filter((field, index) => index !== 0)
+      .filter((field, index) => index !== 0 && index !== 9)
       .map((field, index) => ({
         field: field.name,
         headerName: field.name
@@ -98,7 +98,8 @@ const createColumns = (fields, rows, dataType, getData) => {
         <DeleteStockButton
           transactionIDs={[params.row.transaction_id]}
           getData={getData}
-          className={"bg-gray-200 mt-2"}
+          className={"bg-gray-200"}
+          style={{ marginTop: "0.5rem" }}
         />
       ),
     });
