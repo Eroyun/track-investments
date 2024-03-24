@@ -7,11 +7,11 @@ import { useTheme } from '@mui/material/styles';
 import Image from 'next/image';
 import login from '../assets/login.png';
 
-const NavBar = ({ handleLogin }) => {
+const NavBar = () => {
     const theme = useTheme();
 
     return (
-        <AppBar position="static" sx={{ background: theme.palette.secondary.main }}>
+        <AppBar position="static" sx={{ background: theme.palette.primary.main }}>
             <Toolbar>
                 <Typography
                     variant="h6"
@@ -25,15 +25,13 @@ const NavBar = ({ handleLogin }) => {
                 >
                     OneStopInvestor
                 </Typography>
-                <Button color="inherit" onClick={handleLogin}>
-                    <Image
-                        src={login}
-                        alt="Login"
-                        width={40}
-                        height={40}
-                        layout="fixed"
-                    />
-                </Button>
+                {/* <Image
+                    src={login}
+                    alt="Login"
+                    width={40}
+                    height={40}
+                    layout="fixed"
+                /> */}
             </Toolbar>
         </AppBar>
     );
